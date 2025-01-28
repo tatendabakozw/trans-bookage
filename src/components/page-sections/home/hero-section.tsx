@@ -3,13 +3,21 @@ import { motion } from 'framer-motion';
 
 const HeroSection = () => {
     return (
-        <div className="relative flex flex-col lg:flex-row min-h-[95vh] bg-white overflow-hidden">
+        <div
+            className="relative flex flex-col items-center lg:flex-row min-h-[95vh] bg-white overflow-hidden"
+            style={{
+                backgroundImage: "linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.7)), url('/images/map-bg1.png')",
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+            }}
+        >
             {/* Left side - Content */}
             <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
-                className="flex flex-col justify-center w-full lg:w-1/2 px-6 lg:px-16 py-12 z-10"
+                className="flex flex-col justify-center w-full lg:w-1/2 px-6 lg:px-16 py-12 z-10 bg-white/10"
             >
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-6">
                     Book Your Bus Journey
@@ -33,51 +41,23 @@ const HeroSection = () => {
                 </motion.div>
             </motion.div>
 
-            {/* Right side - Map Background */}
+            {/* Right side - Map Background with Animated Bus */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8 }}
-                className="absolute lg:relative w-full lg:w-1/2 h-full opacity-10 lg:opacity-20"
+                className="md:flex hidden w-full lg:w-1/2 h-full bg-green-300 items-center content-center justify-center opacity-10 lg:opacity-20"
             >
-                <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-transparent lg:hidden" />
-                <svg
-                    className="w-full h-full text-gray-200"
-                    viewBox="0 0 100 100"
-                    preserveAspectRatio="none"
-                >
-                    {/* Simplified map design */}
-                    <path
-                        d="M10,30 Q30,10 50,30 T90,30"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="0.5"
-                    />
-                    <circle cx="10" cy="30" r="2" fill="currentColor" />
-                    <circle cx="90" cy="30" r="2" fill="currentColor" />
-                    {/* Add more path elements for a more detailed map background */}
-                </svg>
-
-                {/* Bus illustration overlay */}
                 <motion.div
+                    className=" w-24 h-12"
                     initial={{ x: '100%' }}
-                    animate={{ x: '0%' }}
-                    transition={{ duration: 1, delay: 0.5 }}
-                    className="absolute bottom-1/4 right-0 w-2/3 h-1/3"
+                    animate={{ x: '-100%' }}
+                    transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
                 >
-                    <div className="relative w-full h-full">
-                        {/* Simple bus silhouette */}
-                        <svg
-                            viewBox="0 0 100 40"
-                            className="w-full h-full text-blue-600 opacity-20"
-                        >
-                            <rect x="10" y="10" width="80" height="25" rx="5" />
-                            <circle cx="25" cy="35" r="4" />
-                            <circle cx="75" cy="35" r="4" />
-                        </svg>
-                    </div>
+                   {/* TODO: put bus png at /images/bus.png */}
                 </motion.div>
             </motion.div>
+
 
             {/* Features highlights */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white pb-6 lg:hidden">

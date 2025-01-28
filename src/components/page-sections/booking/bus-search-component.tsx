@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import GeneralLayout from '@/layouts/GeneralLayout';
+import { motion } from 'framer-motion';
 
-const BusSearch = () => {
-  const [searchData, setSearchData] = useState({
-    from: '',
-    to: '',
-    date: '',
-    passengers: '1'
-  });
+function BusSearchComponent() {
+    const [searchData, setSearchData] = useState({
+        from: '',
+        to: '',
+        date: '',
+        passengers: '1'
+    });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log(searchData);
-  };
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log(searchData);
+    };
 
-  return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           {/* Hero Section */}
           <div className="text-center mb-12">
@@ -115,7 +114,7 @@ const BusSearch = () => {
           </motion.div>
         </div>
       </div>
-  );
-};
+    )
+}
 
-export default BusSearch;
+export default BusSearchComponent

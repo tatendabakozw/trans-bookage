@@ -17,7 +17,7 @@ const Navbar = () => {
     }, []);
 
     const menuItems = [
-        { title: 'Pricing', href: '#' },
+        { title: 'Home', href: '/' },
         { title: 'About', href: '#' },
         { title: 'Contact', href: '#' }
     ];
@@ -40,9 +40,9 @@ const Navbar = () => {
                         animate={{ opacity: 1 }}
                         className="flex-shrink-0"
                     >
-                        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                        <Link href={'/'} className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                             Navbar
-                        </h1>
+                        </Link>
                     </motion.div>
 
                     {/* Desktop Menu */}

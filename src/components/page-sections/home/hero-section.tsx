@@ -52,10 +52,10 @@ const HeroSection = () => {
                 {/* Animated Bus */}
                 <motion.div
                     className="absolute h-auto"
-                    initial={{ x: '20%' }}
-                    animate={{ x: '-20%' }}
+                    initial={{ x: '5%' }}
+                    animate={{ x: '-10%' }}
                     transition={{
-                        duration: 6,
+                        duration: 2,
                         repeat: Infinity,
                         repeatType: 'reverse', // Causes the animation to reverse direction
                         ease: 'linear',

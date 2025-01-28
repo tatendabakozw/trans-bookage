@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import GeneralLayout from '@/layouts/GeneralLayout';
+import BusSearchComponent from '@/components/page-sections/booking/bus-search-component';
 
 const BusSearch = () => {
     const [searchData, setSearchData] = useState({
@@ -17,7 +18,7 @@ const BusSearch = () => {
 
     return (
         <GeneralLayout>
-            <BusSearch />
+            <BusSearchComponent />
         </GeneralLayout>
     );
 };

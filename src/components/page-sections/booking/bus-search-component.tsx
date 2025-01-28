@@ -1,19 +1,40 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/router';
 
 function BusSearchComponent() {
-    const [searchData, setSearchData] = useState({
-        from: '',
-        to: '',
-        date: '',
-        passengers: '1'
-    });
+  const router = useRouter();
+  const { from, to, date, passengers } = router.query;
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log(searchData);
-    };
+  const [searchData, setSearchData] = useState({
+    from: '',
+    to: '',
+    date: '',
+    passengers: '1',
+  });
+
+  // Utility function to safely extract string values
+  const getQueryValue = (value: string | string[] | undefined): string => {
+    return Array.isArray(value) ? value[0] : value || '';
+  };
+
+  // Auto-fill the form fields with query parameters
+  useEffect(() => {
+    setSearchData({
+      from: getQueryValue(from),
+      to: getQueryValue(to),
+      date: getQueryValue(date),
+      passengers: getQueryValue(passengers) || '1',
+    });
+  }, [from, to, date, passengers]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Search Data:', searchData);
+    // Perform search or redirect
+  };
+
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">

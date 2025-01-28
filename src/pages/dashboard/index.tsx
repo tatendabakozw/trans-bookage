@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 function Login() {
+    const router = useRouter()
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -15,7 +17,12 @@ function Login() {
     e.preventDefault();
     setIsLoading(true);
     // Add login logic here
-    setTimeout(() => setIsLoading(false), 1500);
+    setTimeout(() => 
+    {
+        setIsLoading(false);
+        router.push('/dashboard/home')
+    }
+    , 1500);
   };
 
   return (

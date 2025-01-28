@@ -1,11 +1,26 @@
-import React from 'react'
+import React, { ReactNode, useContext, useEffect } from "react";
+import Navbar from "../components/navigation/Navbar";
+import Head from "next/head";
+import DashboardNavbar from "@/components/navigation/DashboardNavbar";
 
-type Props = {children: React.ReactNode}
+type Props = {
+  children?: ReactNode;
+};
 
-const DashboardLayout = ({children}: Props) => {
+const DashboardLayout = (props: Props) => {
   return (
-    <div>{children}</div>
-  )
-}
+    <>
+      <Head>
+        <title>Dashboard</title>
+      </Head>
+      <div className="flex flex-col min-h-screen">
+        <div className="nav">
+          <DashboardNavbar />
+        </div>
+        {props.children}
+      </div>
+    </>
+  );
+};
 
-export default DashboardLayout
+export default DashboardLayout;

@@ -8,31 +8,36 @@ import {
   ChevronRightIcon,
   CurrencyDollarIcon
 } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/router';
 
 interface BookBusComponentProps {
-  routeName: string;
-  travelDate: string;
-  pickupTime: string;
-  dropOffTime: string;
-  startingPoint: string;
-  destination: string;
-  price: number;
-  seatsAvailable: number;
-  busType: string;
-}
+    id: string; // Add id to props
+    routeName: string;
+    travelDate: string;
+    pickupTime: string;
+    dropOffTime: string;
+    startingPoint: string;
+    destination: string;
+    price: number;
+    seatsAvailable: number;
+    busType: string;
+  }
 
 const BookBusComponent = ({
-  routeName,
-  travelDate,
-  pickupTime,
-  dropOffTime,
-  startingPoint,
-  destination,
-  price,
-  seatsAvailable,
-  busType
+    id,
+    routeName,
+    travelDate,
+    pickupTime,
+    dropOffTime,
+    startingPoint,
+    destination,
+    price,
+    seatsAvailable,
+    busType
 }: BookBusComponentProps) => {
   // Calculate the percentage of seats filled
+ 
+  const router = useRouter();
   const seatPercentage = Math.min((seatsAvailable / 50) * 100, 100);
   
   // Determine availability status and color
@@ -42,85 +47,105 @@ const BookBusComponent = ({
     return 'bg-red-50 text-red-700';
   };
 
+
+  const handleBooking = () => {
+    const queryParams = new URLSearchParams({
+      busId: id,
+      route: routeName,
+      from: startingPoint,
+      to: destination,
+      date: travelDate,
+      pickup: pickupTime,
+      dropoff: dropOffTime,
+      price: price.toString(),
+      type: busType,
+      seats: '1' // Default to 1 seat
+    }).toString();
+
+    router.push(`/checkout?${queryParams}`);
+  };
+
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl p-6 border border-gray-100 hover:shadow-lg transition-all duration-300"
-    >
-      {/* Top Section - Route Name and Price */}
-      <div className="flex justify-between items-start mb-6">
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-100"
+  >
+    <div className="p-6 space-y-6">
+      {/* Header Section */}
+      <div className="flex justify-between items-start">
+        <div className="space-y-1">
+          <h3 className="text-lg font-semibold text-gray-900">{routeName}</h3>
+          <div className="flex items-center space-x-2 text-gray-600">
+            <MapPinIcon className="w-4 h-4 text-blue-600" />
+            <span className="text-sm">{startingPoint}</span>
+            <ChevronRightIcon className="w-4 h-4" />
+            <span className="text-sm">{destination}</span>
+          </div>
+        </div>
+        <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+          {busType}
+        </span>
+      </div>
+
+      {/* Time and Price Section */}
+      <div className="grid grid-cols-3 gap-6">
         <div className="space-y-2">
-          <h3 className="text-xl font-semibold text-gray-900">{routeName}</h3>
-          <span className="inline-block px-3 py-1 text-sm font-medium rounded-full bg-blue-50 text-blue-700">
-            {busType}
-          </span>
-        </div>
-        <div className="text-right">
-          <div className="flex items-center justify-end space-x-1">
-            <CurrencyDollarIcon className="w-6 h-6 text-gray-600" />
-            <span className="text-2xl font-bold text-gray-900">{price}</span>
+          <div className="flex items-center space-x-2 text-gray-600">
+            <CalendarIcon className="w-4 h-4 text-blue-600" />
+            <span className="text-sm">{travelDate}</span>
           </div>
-          <span className="text-sm text-gray-500">per seat</span>
+          <div className="flex items-center space-x-2 text-gray-600">
+            <ClockIcon className="w-4 h-4 text-blue-600" />
+            <div>
+              <p className="text-sm">Pickup: <span className="font-medium">{pickupTime}</span></p>
+              <p className="text-sm">Drop-off: <span className="font-medium">{dropOffTime}</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col justify-center">
+          <div className={`inline-flex items-center space-x-1 px-3 py-1.5 rounded-full ${getAvailabilityStatus()}`}>
+            <UserIcon className="w-4 h-4" />
+            <span className="text-sm font-medium">{seatsAvailable} seats left</span>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-end justify-center space-y-2">
+          <div className="text-right">
+            <div className="text-2xl font-bold text-gray-900">${price}</div>
+            <div className="text-sm text-gray-500">per person</div>
+          </div>
+          <motion.button
+            onClick={handleBooking}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="bg-blue-600 text-white px-6 py-2.5 rounded-xl hover:bg-blue-700 
+                     transition-all duration-200 flex items-center space-x-2 shadow-sm hover:shadow"
+          >
+            <span className="font-medium">Book Now</span>
+            <ChevronRightIcon className="w-4 h-4" />
+          </motion.button>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="space-y-6">
-        {/* Route Information */}
-        <div className="flex items-center space-x-3">
-          <MapPinIcon className="w-5 h-5 text-blue-600 flex-shrink-0" />
-          <div className="flex items-center space-x-2 text-gray-700">
-            <span className="font-medium">{startingPoint}</span>
-            <ChevronRightIcon className="w-4 h-4 text-gray-400" />
-            <span className="font-medium">{destination}</span>
-          </div>
-        </div>
-
-        {/* Time and Date Information */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <CalendarIcon className="w-5 h-5 text-blue-600" />
-              <span className="text-sm text-gray-600">{travelDate}</span>
-            </div>
-            <div className="flex items-start space-x-2">
-              <ClockIcon className="w-5 h-5 text-blue-600" />
-              <div className="space-y-1">
-                <p className="text-sm text-gray-600">Pickup: <span className="font-medium text-gray-800">{pickupTime}</span></p>
-                <p className="text-sm text-gray-600">Drop-off: <span className="font-medium text-gray-800">{dropOffTime}</span></p>
-              </div>
-            </div>
-          </div>
-
-          {/* Availability and Action */}
-          <div className="flex flex-col justify-between items-end">
-            <div className={`flex items-center space-x-2 px-3 py-1 rounded-full ${getAvailabilityStatus()}`}>
-              <UserIcon className="w-4 h-4" />
-              <span className="text-sm font-medium">{seatsAvailable} seats left</span>
-            </div>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 
-                       transition-colors duration-200 font-medium"
-            >
-              Book Now
-            </motion.button>
-          </div>
-        </div>
-
-        {/* Seat Availability Progress Bar */}
-        <div className="w-full">
-          <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
-            <div 
-              className="bg-blue-600 h-full rounded-full transition-all duration-300"
-              style={{ width: `${seatPercentage}%` }}
-            />
-          </div>
+      {/* Progress Bar */}
+      <div className="w-full space-y-1">
+        <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+          <motion.div 
+            initial={{ width: 0 }}
+            animate={{ width: `${seatPercentage}%` }}
+            transition={{ duration: 0.5 }}
+            className={`h-full rounded-full ${
+              seatsAvailable > 20 ? 'bg-green-500' : 
+              seatsAvailable > 5 ? 'bg-yellow-500' : 
+              'bg-red-500'
+            }`}
+          />
         </div>
       </div>
-    </motion.div>
+    </div>
+  </motion.div>
   );
 };
 

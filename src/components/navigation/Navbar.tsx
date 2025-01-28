@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -73,10 +74,10 @@ const Navbar = () => {
                         animate={{ opacity: 1, x: 0 }}
                         className="hidden md:block"
                     >
-                        <button className="group relative px-4 py-2 overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white transition-all duration-300">
+                        <Link href={'/booking'} className="group relative px-4 py-2 overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white transition-all duration-300">
                             <span className="relative z-10">Book Now</span>
                             <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        </button>
+                        </Link>
                     </motion.div>
 
                     {/* Mobile Menu Button */}
@@ -143,10 +144,10 @@ const Navbar = () => {
                                 transition={{ delay: 0.3 }}
                                 className="px-3 py-2"
                             >
-                                <button className="w-full group relative px-4 py-2 overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white transition-all duration-300">
+                                <Link href={'/booking'} className="w-full group relative px-4 py-2 overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white transition-all duration-300">
                                     <span className="relative z-10">Book Now</span>
                                     <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                </button>
+                                </Link>
                             </motion.div>
                         </div>
                     </motion.div>

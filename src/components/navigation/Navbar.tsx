@@ -1,8 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollThreshold = 50; // Adjust this value as needed
+            setIsScrolled(window.scrollY > scrollThreshold);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const menuItems = [
         { title: 'Pricing', href: '#' },
@@ -12,9 +23,13 @@ const Navbar = () => {
 
     return (
         <motion.nav 
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            className="fixed w-full bg-white/80 backdrop-blur-md shadow-sm z-50"
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        className={`fixed w-full transition-all duration-300 ${
+            isScrolled 
+                ? 'bg-white/80 backdrop-blur-md shadow-sm' 
+                : 'bg-transparent'
+        } z-50`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
@@ -41,7 +56,7 @@ const Navbar = () => {
                             >
                                 <a 
                                     href={item.href}
-                                    className="flex items-center space-x-1 text-gray-600 hover:text-blue-600 transition-colors"
+                                    className="flex items-center font-medium space-x-1 text-gray-950 hover:text-blue-600 transition-colors"
                                 >
                                     {item.title}
                                 </a>

@@ -23,19 +23,18 @@ const Navbar = () => {
     ];
 
     return (
-        <motion.nav 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className={`fixed w-full transition-all duration-300 ${
-            isScrolled 
-                ? 'bg-white/80 backdrop-blur-md shadow-sm' 
-                : 'bg-transparent'
-        } z-50`}
+        <motion.nav
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            className={`fixed w-full transition-all duration-300 ${isScrolled
+                    ? 'bg-white/80 backdrop-blur-md shadow-sm'
+                    : 'bg-white/10 backdrop-blur-sm'
+                } z-50`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
                     {/* Logo */}
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className="flex-shrink-0"
@@ -55,13 +54,13 @@ const Navbar = () => {
                                 transition={{ delay: index * 0.1 }}
                                 className="relative group"
                             >
-                                <a 
+                                <a
                                     href={item.href}
                                     className="flex items-center font-medium space-x-1 text-gray-950 hover:text-blue-600 transition-colors"
                                 >
                                     {item.title}
                                 </a>
-                                <motion.div 
+                                <motion.div
                                     className="absolute -bottom-1 left-0 h-0.5 bg-blue-600 w-0 group-hover:w-full transition-all duration-300"
                                 />
                             </motion.div>
@@ -69,7 +68,7 @@ const Navbar = () => {
                     </div>
 
                     {/* Book Now Button */}
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         className="hidden md:block"
@@ -81,7 +80,7 @@ const Navbar = () => {
                     </motion.div>
 
                     {/* Mobile Menu Button */}
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className="md:hidden"
@@ -138,7 +137,7 @@ const Navbar = () => {
                                     </a>
                                 </motion.div>
                             ))}
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.3 }}

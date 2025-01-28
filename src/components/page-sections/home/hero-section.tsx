@@ -1,76 +1,116 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+import { MapPinIcon, CalendarIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 const HeroSection = () => {
     return (
         <div
-            className="relative flex flex-col items-center lg:flex-row min-h-[95vh] bg-white overflow-hidden"
             style={{
-                backgroundImage: "linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.7)), url('/images/map-bg1.png')",
+                backgroundImage:
+                    "linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.7)), url('/images/map-bg1.png')",
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
-            }}
+            }} className="relative min-h-screen bg-gradient-to-b from-sky-50 to-white"
+
         >
-            {/* Left side - Content */}
-            <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                className="flex flex-col justify-center w-full lg:w-1/2 px-6 lg:px-16 py-12 z-10"
-            >
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-6">
-                    Book Your Bus Journey
-                    <span className="text-blue-600"> With Ease</span>
-                </h1>
+            <div className="absolute inset-0 bg-white bg-opacity-40"></div>
+            <div className="relative container mx-auto px-4 py-12 min-h-screen flex flex-col justify-center">
+                {/* Main Content */}
+                <div className="max-w-4xl mx-auto w-full space-y-8">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-center space-y-6"
+                    >
+                        <h1 className="text-4xl md:text-5xl xl:text-6xl font-bold text-gray-900">
+                            Travel Across Cities
+                            <span className="block text-blue-600 mt-2">With Comfort</span>
+                        </h1>
+                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                            Book bus tickets for 10,000+ routes across the country with our secure and easy booking platform
+                        </p>
+                    </motion.div>
 
-                <p className="text-lg text-gray-600 mb-8 max-w-lg">
-                    Find and book the perfect bus seat for your journey. Safe, comfortable, and convenient travel at your fingertips.
-                </p>
+                    {/* Search Card */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="bg-white rounded-2xl border border-zinc-200/30 shadow-xl p-6 md:p-8"
+                    >
+                        <div className="grid md:grid-cols-4 gap-4">
+                            {/* From Location */}
+                            <div className="space-y-2">
+                                <label className="flex items-center text-sm font-medium text-gray-700">
+                                    <MapPinIcon className="w-4 h-4 mr-2 text-blue-600" />
+                                    From
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter city"
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
 
-                {/* Booking Form Card */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="bg-white max-w-md"
-                >
-                    <button className="w-full bg-zinc-950 hover:bg-zinc-80 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200">
-                        Book a Seat Now
-                    </button>
-                </motion.div>
-            </motion.div>
+                            {/* To Location */}
+                            <div className="space-y-2">
+                                <label className="flex items-center text-sm font-medium text-gray-700">
+                                    <MapPinIcon className="w-4 h-4 mr-2 text-blue-600" />
+                                    To
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter city"
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
 
-            {/* Right side - Map Background with Animated Bus */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8 }}
-                className="md:flex hidden w-full lg:w-1/2 h-full items-center justify-center opacity-10 lg:opacity-20"
-            >
-                {/* Animated Bus */}
-                <motion.div
-                    className="absolute h-auto"
-                    initial={{ x: '5%' }}
-                    animate={{ x: '-10%' }}
-                    transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        repeatType: 'reverse', // Causes the animation to reverse direction
-                        ease: 'linear',
-                    }}
-                >
-                    <Image
-                        src="/images/bus.png"
-                        alt="Bus"
-                        width={1024} // Significantly larger width
-                        height={512} // Adjust height proportionally
-                        className="w-[1024px] h-auto" // Explicitly set width using Tailwind
-                        priority // Ensures the image loads quickly
-                    />
-                </motion.div>
-            </motion.div>
+                            {/* Date */}
+                            <div className="space-y-2">
+                                <label className="flex items-center text-sm font-medium text-gray-700">
+                                    <CalendarIcon className="w-4 h-4 mr-2 text-blue-600" />
+                                    Date
+                                </label>
+                                <input
+                                    type="date"
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
+
+                            {/* Search Button */}
+                            <div className="flex items-end">
+                                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-lg transition duration-150 ease-in-out flex items-center justify-center">
+                                    <MagnifyingGlassIcon className="w-4 h-4 mr-2" />
+                                    Search Buses
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    {/* Quick Stats */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                        className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8"
+                    >
+                        {[
+                            { label: 'Daily Trips', value: '1,200+' },
+                            { label: 'Routes', value: '10,000+' },
+                            { label: 'Happy Customers', value: '1M+' },
+                            { label: 'Cities', value: '500+' }
+                        ].map((stat, index) => (
+                            <div key={index} className="text-center">
+                                <div className="font-bold text-xl text-gray-900">{stat.value}</div>
+                                <div className="text-sm text-gray-600">{stat.label}</div>
+                            </div>
+                        ))}
+                    </motion.div>
+                </div>
+            </div>
+
+
         </div>
     );
 };

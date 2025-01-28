@@ -1,141 +1,141 @@
-import React, { useEffect, useState } from 'react'
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import React from 'react'
+import { MagnifyingGlassIcon, MapPinIcon, UserGroupIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/router';
 
 interface Props{
-  from: any;
-  to:any
-  date:any
-  passengers:any
   searchData?:any
   setSearchData:any
   handleSearch?:any
 }
 
-function BusSearchComponent({from, to, date, passengers, setSearchData, searchData, handleSearch}:Props) {
-
-  // Utility function to safely extract string values
-  const getQueryValue = (value: string | string[] | undefined): string => {
-    return Array.isArray(value) ? value[0] : value || '';
-  };
-
-  // Auto-fill the form fields with query parameters
-  useEffect(() => {
-    setSearchData({
-      from: getQueryValue(from),
-      to: getQueryValue(to),
-      date: getQueryValue(date),
-      passengers: getQueryValue(passengers) || '1',
-    });
-  }, [from, to, date, passengers]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Search Data:', searchData);
-    // Perform search or redirect
-  };
-
+function BusSearchComponent({setSearchData, searchData, handleSearch}:Props) {
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
-          >
-            Find Your Perfect Journey
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg text-gray-600 max-w-2xl mx-auto"
-          >
-            Search through hundreds of bus routes to find the best option for your travel
-          </motion.p>
-        </div>
+    <div className="relative min-h-[90vh] bg-gradient-to-br from-slate-50 to-blue-50/30">
+    {/* Background decoration */}
+    <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute top-20 left-20 w-72 h-72 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob" />
+      <div className="absolute -bottom-8 right-20 w-72 h-72 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000" />
+    </div>
 
-        {/* Search Form Card */}
+    <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      {/* Hero Section */}
+      <div className="text-center space-y-6 mb-16">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white/80 backdrop-blur-lg rounded-2xl border border-gray-100 p-8 shadow-xl"
+          className="space-y-4"
         >
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">From</label>
-                <input
-                  type="text"
-                  value={searchData.from}
-                  onChange={(e) => setSearchData({ ...searchData, from: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all duration-200"
-                  placeholder="Departure city"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">To</label>
-                <input
-                  type="text"
-                  value={searchData.to}
-                  onChange={(e) => setSearchData({ ...searchData, to: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all duration-200"
-                  placeholder="Destination city"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Date</label>
-                <input
-                  type="date"
-                  value={searchData.date}
-                  onChange={(e) => setSearchData({ ...searchData, date: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all duration-200"
-                  min={new Date().toISOString().split('T')[0]}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Passengers</label>
-                <select
-                  value={searchData.passengers}
-                  onChange={(e) => setSearchData({ ...searchData, passengers: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all duration-200"
-                >
-                  {[1, 2, 3, 4, 5].map(num => (
-                    <option key={num} value={num}>
-                      {num} {num === 1 ? 'Passenger' : 'Passengers'}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium 
-                         py-4 px-8 rounded-xl hover:from-blue-700 hover:to-blue-800 
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                         flex items-center justify-center gap-2 transition-all duration-200"
-            >
-              <MagnifyingGlassIcon className="w-5 h-5" />
-              Search Buses
-            </motion.button>
-          </form>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900">
+            Find Your Journey
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mt-2">
+              With Ease
+            </span>
+          </h1>
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Connect with thousands of destinations across the country
+          </p>
         </motion.div>
       </div>
+
+      {/* Search Form Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-100/50 p-8 md:p-10 shadow-2xl"
+      >
+        <form onSubmit={handleSearch} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            {/* From */}
+            <div className="space-y-2">
+              <label className="flex items-center text-sm font-medium text-gray-700">
+                <MapPinIcon className="w-4 h-4 mr-2 text-blue-600" />
+                From
+              </label>
+              <input
+                type="text"
+                value={searchData.from}
+                onChange={(e) => setSearchData({ ...searchData, from: e.target.value })}
+                className="w-full px-4 py-3.5 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 
+                         transition-all duration-200 placeholder:text-gray-400"
+                placeholder="Enter departure city"
+                required
+              />
+            </div>
+
+            {/* To */}
+            <div className="space-y-2">
+              <label className="flex items-center text-sm font-medium text-gray-700">
+                <MapPinIcon className="w-4 h-4 mr-2 text-blue-600" />
+                To
+              </label>
+              <input
+                type="text"
+                value={searchData.to}
+                onChange={(e) => setSearchData({ ...searchData, to: e.target.value })}
+                className="w-full px-4 py-3.5 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 
+                         transition-all duration-200 placeholder:text-gray-400"
+                placeholder="Enter destination city"
+                required
+              />
+            </div>
+
+            {/* Date */}
+            <div className="space-y-2">
+              <label className="flex items-center text-sm font-medium text-gray-700">
+                <CalendarIcon className="w-4 h-4 mr-2 text-blue-600" />
+                Date
+              </label>
+              <input
+                type="date"
+                value={searchData.date}
+                onChange={(e) => setSearchData({ ...searchData, date: e.target.value })}
+                className="w-full px-4 py-3.5 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 
+                         transition-all duration-200"
+                min={new Date().toISOString().split('T')[0]}
+                required
+              />
+            </div>
+
+            {/* Passengers */}
+            <div className="space-y-2">
+              <label className="flex items-center text-sm font-medium text-gray-700">
+                <UserGroupIcon className="w-4 h-4 mr-2 text-blue-600" />
+                Passengers
+              </label>
+              <select
+                value={searchData.passengers}
+                onChange={(e) => setSearchData({ ...searchData, passengers: e.target.value })}
+                className="w-full px-4 py-3.5 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 
+                         transition-all duration-200"
+              >
+                {[1, 2, 3, 4, 5].map(num => (
+                  <option key={num} value={num}>
+                    {num} {num === 1 ? 'Passenger' : 'Passengers'}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <motion.button
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
+            type="submit"
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-medium 
+                     py-4 px-8 rounded-xl hover:from-blue-700 hover:to-purple-700 
+                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                     flex items-center justify-center gap-3 transition-all duration-300
+                     shadow-lg hover:shadow-xl"
+          >
+            <MagnifyingGlassIcon className="w-5 h-5" />
+            Find Buses
+          </motion.button>
+        </form>
+      </motion.div>
     </div>
+  </div>
   )
 }
 

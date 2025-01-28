@@ -21,7 +21,7 @@ const HeroSection = () => {
 
         // Redirect to the /bookings page with query parameters
         const query = new URLSearchParams(formData).toString();
-        router.push(`/bookings?${query}`);
+        router.push(`/booking?${query}`);
     };
 
     return (
@@ -36,18 +36,20 @@ const HeroSection = () => {
             className="relative min-h-screen bg-gradient-to-b from-sky-50 to-white"
         >
             <div className="absolute inset-0 bg-white bg-opacity-40"></div>
-            <div className="relative container mx-auto px-4 py-12 min-h-screen flex flex-col justify-center">
-                <div className="max-w-4xl mx-auto w-full space-y-8">
+         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-20 min-h-screen flex flex-col justify-center">
+                <div className="max-w-4xl mx-auto w-full space-y-12">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="text-center space-y-6"
                     >
-                        <h1 className="text-4xl md:text-5xl xl:text-6xl font-bold text-gray-900">
+                        <h1 className="text-4xl md:text-5xl xl:text-6xl font-bold tracking-tight">
                             Travel Across Cities
-                            <span className="block text-blue-600 mt-2">With Comfort</span>
+                            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mt-2">
+                                With Comfort
+                            </span>
                         </h1>
-                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                        <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
                             Book bus tickets for 10,000+ routes across the country with our secure and easy booking platform
                         </p>
                     </motion.div>
@@ -57,69 +59,74 @@ const HeroSection = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="bg-white rounded-2xl border border-zinc-200/30 shadow-xl p-6 md:p-8"
+                        className="bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-100/50 p-8 md:p-10 shadow-2xl"
                     >
-                        <form onSubmit={handleSearch} className="grid md:grid-cols-4 gap-4">
-                            {/* From Location */}
-                            <div className="space-y-2">
-                                <label className="flex items-center text-sm font-medium text-gray-700">
-                                    <MapPinIcon className="w-4 h-4 mr-2 text-blue-600" />
-                                    From
-                                </label>
-                                <input
-                                    type="text"
-                                    name="from"
-                                    placeholder="Enter city"
-                                    value={formData.from}
-                                    onChange={handleInputChange}
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    required
-                                />
+                        <form onSubmit={handleSearch} className="space-y-8">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="space-y-2">
+                                    <label className="flex items-center text-sm font-medium text-gray-700">
+                                        <MapPinIcon className="w-4 h-4 mr-2 text-blue-600" />
+                                        From
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="from"
+                                        value={formData.from}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-3.5 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 
+                                               transition-all duration-200 placeholder:text-gray-400"
+                                        placeholder="Enter departure city"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="flex items-center text-sm font-medium text-gray-700">
+                                        <MapPinIcon className="w-4 h-4 mr-2 text-blue-600" />
+                                        To
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="to"
+                                        value={formData.to}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-3.5 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 
+                                               transition-all duration-200 placeholder:text-gray-400"
+                                        placeholder="Enter destination city"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="flex items-center text-sm font-medium text-gray-700">
+                                        <CalendarIcon className="w-4 h-4 mr-2 text-blue-600" />
+                                        Date
+                                    </label>
+                                    <input
+                                        type="date"
+                                        name="date"
+                                        value={formData.date}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-3.5 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 
+                                               transition-all duration-200"
+                                        min={new Date().toISOString().split('T')[0]}
+                                        required
+                                    />
+                                </div>
                             </div>
 
-                            {/* To Location */}
-                            <div className="space-y-2">
-                                <label className="flex items-center text-sm font-medium text-gray-700">
-                                    <MapPinIcon className="w-4 h-4 mr-2 text-blue-600" />
-                                    To
-                                </label>
-                                <input
-                                    type="text"
-                                    name="to"
-                                    placeholder="Enter city"
-                                    value={formData.to}
-                                    onChange={handleInputChange}
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-
-                            {/* Date */}
-                            <div className="space-y-2">
-                                <label className="flex items-center text-sm font-medium text-gray-700">
-                                    <CalendarIcon className="w-4 h-4 mr-2 text-blue-600" />
-                                    Date
-                                </label>
-                                <input
-                                    type="date"
-                                    name="date"
-                                    value={formData.date}
-                                    onChange={handleInputChange}
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-
-                            {/* Search Button */}
-                            <div className="flex items-end">
-                                <button
-                                    type="submit"
-                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-lg transition duration-150 ease-in-out flex items-center justify-center"
-                                >
-                                    <MagnifyingGlassIcon className="w-4 h-4 mr-2" />
-                                    Search Buses
-                                </button>
-                            </div>
+                            <motion.button
+                                whileHover={{ scale: 1.01 }}
+                                whileTap={{ scale: 0.98 }}
+                                type="submit"
+                                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-medium 
+                                       py-4 px-8 rounded-xl hover:from-blue-700 hover:to-purple-700 
+                                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                                       flex items-center justify-center gap-3 transition-all duration-300
+                                       shadow-lg hover:shadow-xl"
+                            >
+                                Search Buses
+                            </motion.button>
                         </form>
                     </motion.div>
 

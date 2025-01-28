@@ -9,14 +9,19 @@ const DashboardNavbar = (props: Props) => {
   const router = useRouter();
   const { pathname } = router;
 
+  const nav_options = [
+    { name: "Overview", location: "/dashboard/overview" },
+    { name: "Bookings", location: "/dashboard/bookings" },
+  ]
+
   return (
     <div className="w-full border border-zinc-200/50">
       <div className="container w-full max-w-7xl mx-auto px-4 flex flex-row items-center space-x-4 py-4 ">
         <Link href={"/overview"} className="heading-text font-bold">
-          Water Item
+          Bookings Manager
         </Link>
         <div className="md:flex hidden flex-row items-center space-x-4 text-sm font-semibold">
-          {/* {data.nav_options.map((item, index) => (
+          {nav_options.map((item, index) => (
             <Link
               href={item.location}
               key={index}
@@ -28,7 +33,7 @@ const DashboardNavbar = (props: Props) => {
             >
               {item.name}
             </Link>
-          ))} */}
+          ))}
         </div>
         <div className="flex-1" />
         <Link

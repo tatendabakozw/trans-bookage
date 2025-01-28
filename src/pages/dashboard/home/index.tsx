@@ -1,11 +1,12 @@
+import BusTable from "@/components/bus-table/bus-table";
 import Calendar from "@/components/clock/Calender";
-import Clock from "@/components/clock/Clock";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { BanknotesIcon } from "@heroicons/react/16/solid";
 import {
     ClipboardDocumentIcon,
     MagnifyingGlassIcon,
 } from "@heroicons/react/16/solid";
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 
@@ -22,27 +23,6 @@ const Overview = () => {
         { name: "All", _id: "all" },
     ];
 
-    const projects = [
-        {
-            name: "Pumps",
-            _id: "inventory-items",
-            link: "https://example.digiforge.app",
-            createdAt: "3",
-            branch: "available",
-            status: "success",
-            Icon: ClipboardDocumentIcon,
-        },
-        {
-            name: "Monitoring",
-            _id: "total-sales",
-            link: "https://daypitch.com",
-            createdAt: "3",
-            branch: "available",
-            status: "success",
-            Icon: BanknotesIcon,
-        },
-    ];
-
     return (
         <DashboardLayout>
             <div className="max-w-7xl px-4 py-16 w-full mx-auto space-y-8 ">
@@ -55,13 +35,13 @@ const Overview = () => {
                             Pump management. Look what you can change
                         </p>
                     </div>
-                    {/* <button
-            onClick={() => router.push("/inventory/create")}
+                    <button
+            onClick={() => router.push("/dashboard/create")}
             className="add-new bg-zinc-900 dark:bg-white text-sm text-white dark:text-zinc-900 flex flex-row items-center space-x-4 rounded-lg font-medium p-2"
           >
             <PlusCircleIcon height={24} width={24} />
             <p>Add New</p>
-          </button> */}
+          </button>
                 </div>
                 {/* search and filter */}
                 <div className="flex flex-row items-center space-x-4 w-full">
@@ -94,24 +74,7 @@ const Overview = () => {
                 </div>
                 <div className="grid md:grid-cols-3 grid-cols-1 gap-8">
                     <div className="md:col-span-2 col-span-1 flex flex-col space-y-4 ">
-                        <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
-                            {/* {projects.map((item) => (
-                <ProjectItem
-                  Icon={item.Icon}
-                  link={item.link}
-                  _id={item._id}
-                  key={item._id}
-                  name={item.name}
-                  createdAt={item.createdAt}
-                  branch={item.branch}
-                  status={item.status}
-                />
-              ))} */}
-                            <Clock />
-                        </div>
-                        {/* <NetworkTable /> */}
-                        {/* <RainFallGuages /> */}
-                        {/* <TanksPageTable /> */}
+                        <BusTable />
                     </div>
                     <div className="col-span-1">
                         <Calendar />

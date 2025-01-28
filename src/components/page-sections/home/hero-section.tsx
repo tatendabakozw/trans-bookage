@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import { MapPinIcon, CalendarIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { MapPinIcon, CalendarIcon } from '@heroicons/react/24/outline';
 
 const HeroSection = () => {
     const router = useRouter();

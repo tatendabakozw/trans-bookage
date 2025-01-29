@@ -28,7 +28,7 @@ function BusSearchComponent({setSearchData, searchData, handleSearch}:Props) {
         >
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900">
             Find Your Journey
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mt-2">
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600 mt-2">
               With Ease
             </span>
           </h1>
@@ -123,7 +123,7 @@ function BusSearchComponent({setSearchData, searchData, handleSearch}:Props) {
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-medium 
+            className="w-full bg-gradient-to-r from-red-400 to-red-600 text-white text-lg font-medium 
                      py-4 px-8 rounded-xl hover:from-blue-700 hover:to-purple-700 
                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                      flex items-center justify-center gap-3 transition-all duration-300

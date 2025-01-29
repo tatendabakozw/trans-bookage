@@ -35,9 +35,7 @@ const BusSearch = () => {
             passengers: getQueryValue(passengers) || '1',
         });
     }, [router.query]);
-
-    console.log("Search data", searchData);
-
+    
     // Fetch buses based on search criteria
     const fetchBuses = async () => {
         try {
@@ -47,9 +45,9 @@ const BusSearch = () => {
                 from: searchData.from,
                 to: searchData.to,
                 date: searchData.date,
-              });
+            });
 
-              const response:any = await api.get(`/bus/all?${queryParams}`);
+            const response: any = await api.get(`/bus/all?${queryParams}`);
 
             setFilteredBuses(response?.buses);
 

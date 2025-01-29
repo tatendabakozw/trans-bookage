@@ -65,13 +65,13 @@ function Checkout() {
     return (
         <GeneralLayout>
             <div className="min-h-screen relative bg-gray-50 py-24">
-                <div className="max-w-7xl grid grid-cols-3 mx-auto px-4 gap-8 sm:px-6 lg:px-8">
+                <div className="max-w-7xl grid md:grid-cols-3 grid-cols-1 mx-auto px-4 gap-8 sm:px-6 lg:px-8">
                     {/* Main Form Section */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="bg-white col-span-2 border border-zinc-200/50 rounded-2xl shadow-sm p-6"
+                        className="bg-white md:col-span-2 col-span-1 border border-zinc-200/50 rounded-2xl shadow-sm p-6"
                     >
                         <form onSubmit={handleSubmit} className="space-y-8">
                             {/* Payer Details Section */}

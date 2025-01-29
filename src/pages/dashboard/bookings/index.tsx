@@ -149,7 +149,7 @@ export default function ManageBookings() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-600">
                             {/* {new Date(booking.createdAt).toLocaleDateString()} */}
-                            created at
+                            {/* created at */}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">

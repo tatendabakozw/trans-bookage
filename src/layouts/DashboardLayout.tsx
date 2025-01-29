@@ -1,5 +1,4 @@
-import React, { ReactNode, useContext, useEffect } from "react";
-import Navbar from "../components/navigation/Navbar";
+import React, { ReactNode } from "react";
 import Head from "next/head";
 import DashboardNavbar from "@/components/navigation/DashboardNavbar";
 

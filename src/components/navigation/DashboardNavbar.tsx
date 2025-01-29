@@ -37,7 +37,7 @@ const DashboardNavbar = (props: Props) => {
         </div>
         <div className="flex-1" />
         <Link
-          href={"/settings"}
+          href={"/dashboard/settings"}
           className=" transition-all cursor-pointer duration-100 main-link-text dark:hover:bg-slate-800 hover:bg-slate-100 p-1 rounded-full"
         >
           <Cog6ToothIcon height={20} width={20} />

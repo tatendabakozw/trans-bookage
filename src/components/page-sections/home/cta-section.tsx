@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 export function CTASection() {
     return (
@@ -11,9 +12,9 @@ export function CTASection() {
             className="max-w-3xl mx-auto"
           >
             <h2 className="text-3xl font-bold text-white mb-8">Ready to Start Your Journey?</h2>
-            <button className="bg-white text-red-600 px-8 py-4 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+            <Link href='/booking' className="bg-white text-red-600 px-8 py-4 rounded-xl font-medium hover:bg-gray-50 transition-colors">
               Book Your Trip Now
-            </button>
+            </Link>
           </motion.div>
         </div>
       </section>

@@ -4,7 +4,8 @@ import {
     PencilIcon,
     TrashIcon,
     ArrowUpIcon,
-    ArrowDownIcon
+    ArrowDownIcon,
+    InformationCircleIcon
 } from '@heroicons/react/24/outline';
 import api from '@/config/apiClient';
 import Link from 'next/link';
@@ -144,8 +145,8 @@ function BusTable() {
 
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div className="flex items-center space-x-3">
-                                        <Link href={`/dashboard/bus/${bus._id}`} className="text-red-600 hover:text-red-900">
-                                            <PencilIcon className="w-5 h-5" />
+                                        <Link href={`/dashboard/bus/${bus._id}`} className="text-zinc-600 hover:text-zinc-900">
+                                            <InformationCircleIcon className="w-5 h-5" />
                                         </Link>
                                         <button className="text-red-600 hover:text-red-900">
                                             <TrashIcon className="w-5 h-5" />

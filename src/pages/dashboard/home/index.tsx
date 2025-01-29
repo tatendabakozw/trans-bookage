@@ -36,12 +36,12 @@ const Overview = () => {
                         </p>
                     </div>
                     <button
-            onClick={() => router.push("/dashboard/create")}
-            className="add-new bg-zinc-900 dark:bg-white text-sm text-white dark:text-zinc-900 flex flex-row items-center space-x-4 rounded-lg font-medium p-2"
-          >
-            <PlusCircleIcon height={24} width={24} />
-            <p>Add New</p>
-          </button>
+                        onClick={() => router.push("/dashboard/create")}
+                        className="add-new bg-zinc-900 dark:bg-white text-sm text-white dark:text-zinc-900 flex flex-row items-center space-x-4 rounded-lg font-medium p-2"
+                    >
+                        <PlusCircleIcon height={24} width={24} />
+                        <p>Add New</p>
+                    </button>
                 </div>
                 {/* search and filter */}
                 <div className="flex flex-row items-center space-x-4 w-full">
@@ -63,8 +63,8 @@ const Overview = () => {
                                 onClick={() => setSelectedOption(item)}
                                 key={item._id}
                                 className={`${item._id === selected_option._id
-                                        ? "text-primary-original "
-                                        : "text-zinc-700 "
+                                    ? "text-primary-original "
+                                    : "text-zinc-700 "
                                     } px-4 py-2`}
                             >
                                 {item.name}

@@ -34,7 +34,6 @@ function BusTable() {
 
     const fetchBuses = async () => {
         try {
-            // Since apiClient handles data extraction, we can use response directly
             const busData = await api.get<Bus[]>('/bus/all');
             setBuses(busData); // Direct assignment since data is already extracted
         } catch (err) {
@@ -54,17 +53,10 @@ function BusTable() {
         }
     };
 
-    const sortedBuses = [...buses].sort((a, b) => {
-        if (sortDirection === 'asc') {
-            return a[sortField] > b[sortField] ? 1 : -1;
-        }
-        return a[sortField] < b[sortField] ? 1 : -1;
-    });
-
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
             </div>
         );
     }
@@ -111,53 +103,61 @@ function BusTable() {
                         </th>
                     </tr>
                 </thead>
+
                 <tbody className="bg-white divide-y divide-gray-200">
-                    {sortedBuses.map((bus) => (
-                        <motion.tr
-                            key={bus.id}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="hover:bg-gray-50"
-                        >
+                    {buses?.length > 0 ? (
+                        buses.map((bus:Bus) => (
+                            <motion.tr
+                                key={bus.id}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="hover:bg-gray-50"
+                            >
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="text-sm text-gray-900">{bus.startingPoint}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="text-sm text-gray-900">{bus.destination}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="text-sm text-gray-900">
+                                        {new Date(bus.travelDate).toLocaleDateString()}
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="text-sm text-gray-900">{bus.pickupTime}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="text-sm text-gray-900">${bus.price}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        ${bus.seatsAvailable > 20 ? 'bg-green-100 text-green-800' :
+                                            bus.seatsAvailable > 5 ? 'bg-yellow-100 text-yellow-800' :
+                                                'bg-red-100 text-red-800'}`}>
+                                        {bus.seatsAvailable}
+                                    </span>
+                                </td>
 
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-900">{bus.startingPoint}</div>
+                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div className="flex items-center space-x-3">
+                                        <button className="text-red-600 hover:text-red-900">
+                                            <PencilIcon className="w-5 h-5" />
+                                        </button>
+                                        <button className="text-red-600 hover:text-red-900">
+                                            <TrashIcon className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </td>
+                            </motion.tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                                No buses available at the moment.
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-900">{bus.destination}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-900">
-                                    {new Date(bus.travelDate).toLocaleDateString()}
-                                </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-900">{bus.pickupTime}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-900">${bus.price}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                  ${bus.seatsAvailable > 20 ? 'bg-green-100 text-green-800' :
-                                        bus.seatsAvailable > 5 ? 'bg-yellow-100 text-yellow-800' :
-                                            'bg-red-100 text-red-800'}`}>
-                                    {bus.seatsAvailable}
-                                </span>
-                            </td>
-
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div className="flex items-center space-x-3">
-                                    <button className="text-blue-600 hover:text-blue-900">
-                                        <PencilIcon className="w-5 h-5" />
-                                    </button>
-                                    <button className="text-red-600 hover:text-red-900">
-                                        <TrashIcon className="w-5 h-5" />
-                                    </button>
-                                </div>
-                            </td>
-                        </motion.tr>
-                    ))}
+                        </tr>
+                    )}
                 </tbody>
             </table>
         </div>

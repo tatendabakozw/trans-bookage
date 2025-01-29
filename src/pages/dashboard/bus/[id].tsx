@@ -158,26 +158,34 @@ function BusDetails() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {bus.bookings?.map((booking:any) => (
-                  <tr key={booking._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {booking.bookerName}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {booking.bookerEmail}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {booking.seatsBooked}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      ${booking.totalPrice}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(booking.bookingDate).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+    {bus.bookings && bus.bookings.length > 0 ? (
+        bus.bookings.map((booking: any) => (
+            <tr key={booking._id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {booking.bookerName}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {booking.bookerEmail}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {booking.seatsBooked}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    ${booking.totalPrice}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {new Date(booking.bookingDate).toLocaleDateString()}
+                </td>
+            </tr>
+        ))
+    ) : (
+        <tr>
+            <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                No bookings available.
+            </td>
+        </tr>
+    )}
+</tbody>
             </table>
           </div>
         </motion.div>

@@ -8,7 +8,8 @@ import {
   UserGroupIcon,
   CurrencyDollarIcon,
   ClockIcon,
-  TicketIcon 
+  TicketIcon, 
+  InformationCircleIcon
 } from '@heroicons/react/24/outline';
 import api from '@/config/apiClient';
 
@@ -19,6 +20,15 @@ interface Booking {
   seatsBooked: number;
   totalPrice: number;
   bookingDate: string;
+  passengers?: Array<{
+    name: string;
+    age: number;
+    seatNumber: number;
+  }>;
+  contactPhone?: string;
+  specialRequests?: string;
+  paymentStatus: string;
+  bookingStatus: string;
 }
 
 interface Bus {
@@ -34,6 +44,8 @@ interface Bus {
   busType: string;
   bookings?: Booking[];
 }
+
+
 
 function BusDetails() {
   const router = useRouter();
@@ -221,6 +233,9 @@ function BusDetails() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Date
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Info
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -247,6 +262,10 @@ function BusDetails() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(booking.bookingDate).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {/* TODO: expand item to view all info in detail including passengers when clicked */}
+                      <InformationCircleIcon height={20} width={20} />
                     </td>
                   </motion.tr>
                 ))}

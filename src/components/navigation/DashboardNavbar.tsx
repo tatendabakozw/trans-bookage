@@ -10,14 +10,14 @@ const DashboardNavbar = (props: Props) => {
   const { pathname } = router;
 
   const nav_options = [
-    { name: "Overview", location: "/dashboard/overview" },
+    { name: "Overview", location: "/dashboard/home" },
     { name: "Bookings", location: "/dashboard/bookings" },
   ]
 
   return (
     <div className="w-full border border-zinc-200/50">
       <div className="container w-full max-w-7xl mx-auto px-4 flex flex-row items-center space-x-4 py-4 ">
-        <Link href={"/overview"} className="heading-text font-bold">
+        <Link href={"/dashboard/home"} className="heading-text font-bold">
           Bookings Manager
         </Link>
         <div className="md:flex hidden flex-row items-center space-x-4 text-sm font-semibold">

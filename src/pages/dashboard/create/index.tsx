@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import { MapPinIcon, ClockIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import api from '@/config/apiClient';
+import { useRouter } from 'next/router';
 
 interface BusRoute {
     routeName: string;
@@ -17,6 +18,7 @@ interface BusRoute {
 }
 
 function Create() {
+    const router = useRouter()
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState<BusRoute>({
         routeName: '',
@@ -35,7 +37,7 @@ function Create() {
         setIsLoading(true);
 
         try {
-            const response = await api.post<BusRoute>('/bus/create', formData);
+            const response:any = await api.post<BusRoute>('/bus/create', formData);
 
             // toast.success('Route created successfully!');
             // Reset form
@@ -50,6 +52,7 @@ function Create() {
                 seatsAvailable: 50,
                 busType: 'Standard'
             });
+            router.push(`/dashboard/bus/${response._id}`);
 
         } catch (error) {
             console.error('Error creating route:', error);

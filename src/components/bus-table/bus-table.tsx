@@ -7,9 +7,10 @@ import {
     ArrowDownIcon
 } from '@heroicons/react/24/outline';
 import api from '@/config/apiClient';
+import Link from 'next/link';
 
 interface Bus {
-    id: string;
+    _id: string;
     routeName: string;
     travelDate: string;
     pickupTime: string;
@@ -43,6 +44,8 @@ function BusTable() {
             setIsLoading(false);
         }
     };
+
+    console.log("ferced besse", buses);
 
     const handleSort = (field: keyof Bus) => {
         if (field === sortField) {
@@ -108,7 +111,7 @@ function BusTable() {
                     {buses?.length > 0 ? (
                         buses.map((bus:Bus) => (
                             <motion.tr
-                                key={bus.id}
+                                key={bus._id}
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 className="hover:bg-gray-50"
@@ -141,9 +144,9 @@ function BusTable() {
 
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div className="flex items-center space-x-3">
-                                        <button className="text-red-600 hover:text-red-900">
+                                        <Link href={`/dashboard/bus/${bus._id}`} className="text-red-600 hover:text-red-900">
                                             <PencilIcon className="w-5 h-5" />
-                                        </button>
+                                        </Link>
                                         <button className="text-red-600 hover:text-red-900">
                                             <TrashIcon className="w-5 h-5" />
                                         </button>

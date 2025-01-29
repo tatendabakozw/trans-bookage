@@ -39,8 +39,8 @@ const Navbar = () => {
                         animate={{ opacity: 1 }}
                         className="flex-shrink-0"
                     >
-                        <Link href={'/'} className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                            Navbar
+                        <Link href={'/'} className="text-xl uppercase font-bold bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
+                            Africa Connect
                         </Link>
                     </motion.div>
 
@@ -56,12 +56,12 @@ const Navbar = () => {
                             >
                                 <a
                                     href={item.href}
-                                    className="flex items-center font-medium space-x-1 text-gray-950 hover:text-blue-600 transition-colors"
+                                    className="flex items-center font-medium space-x-1 text-gray-950 hover:text-red-600 transition-colors"
                                 >
                                     {item.title}
                                 </a>
                                 <motion.div
-                                    className="absolute -bottom-1 left-0 h-0.5 bg-blue-600 w-0 group-hover:w-full transition-all duration-300"
+                                    className="absolute -bottom-1 left-0 h-0.5 bg-red-600 w-0 group-hover:w-full transition-all duration-300"
                                 />
                             </motion.div>
                         ))}
@@ -73,9 +73,9 @@ const Navbar = () => {
                         animate={{ opacity: 1, x: 0 }}
                         className="hidden md:block"
                     >
-                        <Link href={'/booking'} className="group relative px-4 py-2 overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white transition-all duration-300">
+                        <Link href={'/booking'} className="group relative px-4 py-2 overflow-hidden rounded-lg bg-gradient-to-r from-red-500 to-red-700 text-white transition-all duration-300">
                             <span className="relative z-10">Book Now</span>
-                            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </Link>
                     </motion.div>
 
@@ -143,9 +143,9 @@ const Navbar = () => {
                                 transition={{ delay: 0.3 }}
                                 className="px-3 py-2"
                             >
-                                <Link href={'/booking'} className="w-full group relative px-4 py-2 overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white transition-all duration-300">
+                                <Link href={'/booking'} className="w-full group relative px-4 py-2 overflow-hidden rounded-lg bg-gradient-to-r from-red-500 to-red-700 text-white transition-all duration-300">
                                     <span className="relative z-10">Book Now</span>
-                                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                 </Link>
                             </motion.div>
                         </div>

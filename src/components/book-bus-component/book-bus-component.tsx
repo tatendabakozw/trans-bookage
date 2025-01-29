@@ -21,6 +21,7 @@ interface BookBusComponentProps {
     price: number;
     seatsAvailable: number;
     busType: string;
+    passengers:any
   }
 
 const BookBusComponent = ({
@@ -33,7 +34,8 @@ const BookBusComponent = ({
     destination,
     price,
     seatsAvailable,
-    busType
+    busType,
+    passengers
 }: BookBusComponentProps) => {
   // Calculate the percentage of seats filled
  
@@ -59,7 +61,7 @@ const BookBusComponent = ({
       dropoff: dropOffTime,
       price: price.toString(),
       type: busType,
-      seats: '1' // Default to 1 seat
+      seats: passengers ? passengers : '1' // Default to 1 seat
     }).toString();
 
     router.push(`/checkout?${queryParams}`);

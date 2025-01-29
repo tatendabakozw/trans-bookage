@@ -34,8 +34,8 @@ function BusTable() {
 
     const fetchBuses = async () => {
         try {
-            const busData = await api.get<Bus[]>('/bus/all');
-            setBuses(busData); // Direct assignment since data is already extracted
+            const busData:any = await api.get<Bus[]>('/bus/all');
+            setBuses(busData.buses); // Direct assignment since data is already extracted
         } catch (err) {
             setError('Failed to fetch buses');
             console.error(err);

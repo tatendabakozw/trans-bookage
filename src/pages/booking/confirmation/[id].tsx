@@ -34,7 +34,6 @@ function Confirmation() {
 
       try {
         const response: any = await api.get(`/bookings/${id}`);
-        console.log("response from api: ", response)
         setBooking(response);
       } catch (err) {
         setError('Failed to fetch booking details');

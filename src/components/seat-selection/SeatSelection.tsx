@@ -6,9 +6,10 @@ interface SeatSelectionProps {
   occupiedSeats: number[];
   maxSeats: number;
   onSeatSelect: (selectedSeats: number[]) => void;
+  heading?: boolean;
 }
 
-const SeatSelection = ({ occupiedSeats, maxSeats, onSeatSelect }: SeatSelectionProps) => {
+const SeatSelection = ({ occupiedSeats, maxSeats, onSeatSelect, heading }: SeatSelectionProps) => {
   const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
 
   const handleSeatClick = (seatNumber: number) => {
@@ -32,7 +33,7 @@ const SeatSelection = ({ occupiedSeats, maxSeats, onSeatSelect }: SeatSelectionP
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-900">Select Your Seats</h3>
+        {heading && <h3 className="text-lg font-semibold text-gray-900">{heading}</h3>}
         <div className="flex items-center space-x-4 text-sm">
           <div className="flex items-center">
             <div className="w-4 h-4 bg-gray-100 rounded mr-2" />

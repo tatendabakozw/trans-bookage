@@ -182,8 +182,6 @@ function Checkout() {
 
                                 </div>
 
-
-
                                 {/* Seat Selection Card */}
                                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                                     <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
@@ -196,6 +194,7 @@ function Checkout() {
                                     </div>
                                     <div className="px-6 py-6">
                                         <SeatSelection
+                                            heading
                                             occupiedSeats={[]}
                                             maxSeats={parseInt(seatQuantity as unknown as string)}
                                             onSeatSelect={(selectedSeats) => {

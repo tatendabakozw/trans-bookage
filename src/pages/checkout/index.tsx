@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import GeneralLayout from '@/layouts/GeneralLayout';
@@ -6,13 +6,6 @@ import BookingSummary from '@/components/booking-summary/booking-summary';
 import { UserIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline';
 import api from '@/config/apiClient';
 import SeatSelection from '@/components/seat-selection/SeatSelection';
-
-interface PassengerDetail {
-    id?:any;
-    name: string;
-    email: string;
-    phone: string;
-}
 
 interface PayerDetail {
     name: string;
@@ -24,31 +17,23 @@ function Checkout() {
     const router = useRouter();
     const { busId, route, from, to, date, price, seats } = router.query;
     const [isLoading, setIsLoading] = useState(false);
-    const [passengers, setPassengers] = useState<PassengerDetail[]>([
-        { id: 1, name: '', phone: '', email: '' }
-      ]);
     const [payerDetails, setPayerDetails] = useState<PayerDetail>({
         name: '',
         email: '',
         phone: ''
     });
+    const [seatQuantity, setSeatQuantity] = useState<number>(
+        typeof seats === 'string' ? parseInt(seats) : 1
+    );
 
-    useEffect(() => {
-        if (seats) {
-            const numPassengers = parseInt(seats as string);
-            setPassengers(Array(numPassengers).fill({ name: '', email: '', phone: '' }));
-        }
-    }, [seats]);
+    // Add handler for seat quantity updates
+    const handleSeatQuantityChange = (newQuantity: number) => {
+        if (newQuantity < 1) return;
+        if (newQuantity > 5) return; // Optional: Set maximum seats
 
-    const handlePassengerChange = (id: number, field: keyof PassengerDetail, value: string) => {
-        setPassengers(prevPassengers => 
-          prevPassengers.map(passenger => 
-            passenger.id === id 
-              ? { ...passenger, [field]: value }
-              : passenger
-          )
-        );
-      };
+        setSeatQuantity(newQuantity);
+
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -62,7 +47,7 @@ function Checkout() {
                 bookerName: payerDetails.name,
                 bookerPhone: payerDetails.phone,
                 bookerEmail: payerDetails.email,
-                passengers: passengers,
+                passengers: [],
             };
 
             const response: any = await api.post('/bookings/create', bookingData);
@@ -168,66 +153,34 @@ function Checkout() {
                                                     />
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Passenger Details Cards */}
-                                {passengers.map((passenger, index) => (
-                                    <motion.div
-                                        key={index}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.2 + (index * 0.1) }}
-                                        className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
-                                    >
-                                        <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
-                                            <h3 className="text-lg font-semibold text-gray-900">
-                                                Passenger {index + 1}
-                                            </h3>
-                                        </div>
-                                        <div className="px-6 py-6 space-y-6">
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                <div className="space-y-2">
-                                                    <label className="block text-sm font-medium text-gray-700">
-                                                        Full Name
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        required
-                                                        className="block w-full rounded-lg border-gray-200/50 shadow-sm p-2 border focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                                        value={passenger.name}
-                                                        onChange={(e) => handlePassengerChange(passenger.id, 'name', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="block text-sm font-medium text-gray-700">
-                                                        Email
-                                                    </label>
-                                                    <input
-                                                        type="email"
-                                                        required
-                                                        className="block w-full rounded-lg border-gray-200/50 shadow-sm p-2 border focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                                        value={passenger.email}
-                                                        onChange={(e) => handlePassengerChange(passenger.id, 'email', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="space-y-2 md:col-span-2 lg:col-span-1">
-                                                    <label className="block text-sm font-medium text-gray-700">
-                                                        Phone Number
-                                                    </label>
-                                                    <input
-                                                        type="tel"
-                                                        required
-                                                        className="block w-full rounded-lg border-gray-200/50 shadow-sm p-2 border focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
-                                                        value={passenger.phone}
-                                                        onChange={(e) => handlePassengerChange(passenger.id, 'phone', e.target.value)}
-                                                    />
+                                            <div className="space-y-2 md:col-span-2 lg:col-span-1">
+                                                <label className="text-sm font-medium text-gray-700">
+                                                    Number of Seats:
+                                                </label>
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleSeatQuantityChange(seatQuantity - 1)}
+                                                        className="p-2 rounded-md bg-gray-100 hover:bg-gray-200"
+                                                    >
+                                                        -
+                                                    </button>
+                                                    <span className="w-12 text-center">{seatQuantity}</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleSeatQuantityChange(seatQuantity + 1)}
+                                                        className="p-2 rounded-md bg-gray-100 hover:bg-gray-200"
+                                                    >
+                                                        +
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
-                                    </motion.div>
-                                ))}
+                                    </div>
+
+                                </div>
+
+
 
                                 {/* Seat Selection Card */}
                                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">

@@ -1,6 +1,7 @@
-import React from 'react';
+'use'
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { TicketIcon, CalendarIcon, MapPinIcon, CreditCardIcon } from '@heroicons/react/24/outline';
+import { TicketIcon } from '@heroicons/react/24/outline';
 
 interface Props {
   route: any;
@@ -11,8 +12,21 @@ interface Props {
 }
 
 const BookingSummary = ({ route, date, from, to, price }: Props) => {
-  const receiptNumber = Math.random().toString(36).substr(2, 9).toUpperCase();
-  const currentDate = new Date().toLocaleDateString();
+  const [receiptNumber, setReceiptNumber] = useState<string>('');
+  const [currentDate, setCurrentDate] = useState<string>('');
+
+  useEffect(() => {
+    // Generate receipt number only on client side
+    setReceiptNumber(Math.random().toString(36).substr(2, 9).toUpperCase());
+    
+    // Format date consistently
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    setCurrentDate(formatter.format(new Date()));
+  }, []);
   
   return (
     <motion.div
@@ -28,10 +42,12 @@ const BookingSummary = ({ route, date, from, to, price }: Props) => {
         <div className="text-center mb-6">
           <TicketIcon className="w-8 h-8 mx-auto text-blue-600" />
           <h2 className="text-lg font-semibold text-gray-900 mt-2">RECEIPT</h2>
-          <div className="text-xs text-gray-500 font-mono mt-1 space-y-1">
-            <p>Order: #{receiptNumber}</p>
-            <p>Date: {currentDate}</p>
-          </div>
+          {receiptNumber && currentDate && (
+            <div className="text-xs text-gray-500 font-mono mt-1 space-y-1">
+              <p>Order: #{receiptNumber}</p>
+              <p>Date: {currentDate}</p>
+            </div>
+          )}
         </div>
 
         {/* Main Content */}

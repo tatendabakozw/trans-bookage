@@ -1,6 +1,13 @@
 import React from 'react'
 import { MagnifyingGlassIcon, MapPinIcon, UserGroupIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
+import CitySelect from '@/components/dropdown/city-select';
+
+interface City {
+  id: number;
+  name: string;
+  region: string;
+}
 
 interface Props{
   searchData?:any
@@ -53,15 +60,10 @@ function BusSearchComponent({setSearchData, searchData, handleSearch}:Props) {
                 <MapPinIcon className="w-4 h-4 mr-2 text-blue-600" />
                 From
               </label>
-              <input
-                type="text"
-                value={searchData.from}
-                onChange={(e) => setSearchData({ ...searchData, from: e.target.value })}
-                className="w-full px-4 py-3.5 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 
-                         transition-all duration-200 placeholder:text-gray-400"
-                placeholder="Enter departure city"
-                required
-              />
+              <CitySelect
+      value={searchData.from ? { id: 0, name: searchData.from, region: '' } : null}
+      onChange={(city: City) => setSearchData({ ...searchData, from: city.name })}
+    />
             </div>
 
             {/* To */}
@@ -70,15 +72,10 @@ function BusSearchComponent({setSearchData, searchData, handleSearch}:Props) {
                 <MapPinIcon className="w-4 h-4 mr-2 text-blue-600" />
                 To
               </label>
-              <input
-                type="text"
-                value={searchData.to}
-                onChange={(e) => setSearchData({ ...searchData, to: e.target.value })}
-                className="w-full px-4 py-3.5 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 
-                         transition-all duration-200 placeholder:text-gray-400"
-                placeholder="Enter destination city"
-                required
-              />
+              <CitySelect
+      value={searchData.to ? { id: 0, name: searchData.to, region: '' } : null}
+      onChange={(city: City) => setSearchData({ ...searchData, to: city.name })}
+    />
             </div>
 
             {/* Date */}

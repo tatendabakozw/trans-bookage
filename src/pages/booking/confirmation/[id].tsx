@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircleIcon, PrinterIcon, ShareIcon, HomeIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
-import GeneralLayout from '@/layouts/GeneralLayout';
 import api from '@/config/apiClient';
 
 interface Booking {

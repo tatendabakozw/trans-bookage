@@ -5,8 +5,10 @@ import GeneralLayout from '@/layouts/GeneralLayout';
 import BookingSummary from '@/components/booking-summary/booking-summary';
 import { UserIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline';
 import api from '@/config/apiClient';
+import SeatSelection from '@/components/seat-selection/SeatSelection';
 
 interface PassengerDetail {
+    id?:any;
     name: string;
     email: string;
     phone: string;
@@ -22,7 +24,9 @@ function Checkout() {
     const router = useRouter();
     const { busId, route, from, to, date, price, seats } = router.query;
     const [isLoading, setIsLoading] = useState(false);
-    const [passengers, setPassengers] = useState<PassengerDetail[]>([]);
+    const [passengers, setPassengers] = useState<PassengerDetail[]>([
+        { id: 1, name: '', phone: '', email: '' }
+      ]);
     const [payerDetails, setPayerDetails] = useState<PayerDetail>({
         name: '',
         email: '',
@@ -35,6 +39,16 @@ function Checkout() {
             setPassengers(Array(numPassengers).fill({ name: '', email: '', phone: '' }));
         }
     }, [seats]);
+
+    const handlePassengerChange = (id: number, field: keyof PassengerDetail, value: string) => {
+        setPassengers(prevPassengers => 
+          prevPassengers.map(passenger => 
+            passenger.id === id 
+              ? { ...passenger, [field]: value }
+              : passenger
+          )
+        );
+      };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -52,8 +66,7 @@ function Checkout() {
             };
 
             const response: any = await api.post('/bookings/create', bookingData);
-            setIsLoading(false)
-            // Redirect to confirmation page
+            setIsLoading(false);
             router.push(`/booking/confirmation/${response.booking._id}`);
         } catch (error) {
             console.error('Booking error:', error);
@@ -64,163 +77,216 @@ function Checkout() {
 
     return (
         <GeneralLayout>
-            <div className="min-h-screen relative bg-gray-50 py-24">
-                <div className="max-w-7xl grid md:grid-cols-3 grid-cols-1 mx-auto px-4 gap-8 sm:px-6 lg:px-8">
-                    {/* Main Form Section */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="bg-white md:col-span-2 col-span-1 border border-zinc-200/50 rounded-2xl shadow-sm p-6"
-                    >
-                        <form onSubmit={handleSubmit} className="space-y-8">
-                            {/* Payer Details Section */}
-                            <div className="space-y-6 pb-8 border-b border-gray-200">
-                                <div className="flex items-center justify-between">
-                                    <h2 className="text-2xl font-bold text-gray-900">Payer Details</h2>
-                                    <span className="text-sm text-gray-500">Booking confirmation will be sent to this email</span>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">
-                                            Full Name
-                                        </label>
-                                        <div className="mt-1 relative">
-                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <UserIcon className="h-5 w-5 text-gray-400" />
-                                            </div>
-                                            <input
-                                                type="text"
-                                                required
-                                                className="pl-10 block w-full rounded-xl border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                                value={payerDetails.name}
-                                                onChange={(e) => setPayerDetails({ ...payerDetails, name: e.target.value })}
-                                                placeholder="John Doe"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">
-                                            Email
-                                        </label>
-                                        <div className="mt-1 relative">
-                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <EnvelopeIcon className="h-5 w-5 text-gray-400" />
-                                            </div>
-                                            <input
-                                                type="email"
-                                                required
-                                                className="pl-10 block w-full rounded-xl border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                                value={payerDetails.email}
-                                                onChange={(e) => setPayerDetails({ ...payerDetails, email: e.target.value })}
-                                                placeholder="john@example.com"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">
-                                            Phone Number
-                                        </label>
-                                        <div className="mt-1 relative">
-                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <PhoneIcon className="h-5 w-5 text-gray-400" />
-                                            </div>
-                                            <input
-                                                type="tel"
-                                                required
-                                                className="pl-10 block w-full rounded-xl border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                                value={payerDetails.phone}
-                                                onChange={(e) => setPayerDetails({ ...payerDetails, phone: e.target.value })}
-                                                placeholder="+1 (555) 000-0000"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
+            <div className="min-h-screen bg-gray-50">
+                {/* Header Section */}
+                <div className="bg-white border-b border-gray-200 pt-16">
+                    <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+                        <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+                            <div>
+                                <h1 className="text-3xl font-bold text-gray-900">Complete Your Booking</h1>
+                                <p className="mt-2 text-sm text-gray-500">Please fill in the details below to confirm your reservation</p>
                             </div>
+                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                                <span className="font-medium text-blue-600">Step 2</span> of 3
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                            {/* Passenger Details Section */}
-                            <div className="space-y-6">
-                                <h2 className="text-2xl font-bold text-gray-900">Passenger Details</h2>
-                                {passengers.map((passenger, index) => (
-                                    <div key={index} className="space-y-6 pb-6 border-b border-gray-100">
-                                        <h3 className="text-lg font-medium text-gray-900">
-                                            Passenger {index + 1}
-                                        </h3>
+                {/* Main Content */}
+                <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                        {/* Main Form Section */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="lg:col-span-2 space-y-8"
+                        >
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                {/* Payer Details Card */}
+                                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                                    <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                                        <div className="flex items-center justify-between">
+                                            <h2 className="text-lg font-semibold text-gray-900">Payer Details</h2>
+                                            <span className="text-sm text-gray-500">Booking confirmation details</span>
+                                        </div>
+                                    </div>
+                                    <div className="px-6 py-6 space-y-6">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div>
+                                            <div className="space-y-2">
                                                 <label className="block text-sm font-medium text-gray-700">
                                                     Full Name
                                                 </label>
-                                                <input
-                                                    type="text"
-                                                    required
-                                                    className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                                    value={passenger.name}
-                                                    onChange={(e) => {
-                                                        const newPassengers = [...passengers];
-                                                        newPassengers[index].name = e.target.value;
-                                                        setPassengers(newPassengers);
-                                                    }}
-                                                />
+                                                <div className="relative">
+                                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                        <UserIcon className="h-5 w-5 text-gray-400" />
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        required
+                                                        className="pl-10 block w-full rounded-lg border-gray-200/50 shadow-sm p-2 border focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
+                                                        value={payerDetails.name}
+                                                        onChange={(e) => setPayerDetails({ ...payerDetails, name: e.target.value })}
+                                                        placeholder="John Doe"
+                                                    />
+                                                </div>
                                             </div>
-                                            <div>
+                                            <div className="space-y-2">
                                                 <label className="block text-sm font-medium text-gray-700">
                                                     Email
                                                 </label>
-                                                <input
-                                                    type="email"
-                                                    required
-                                                    className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                                    value={passenger.email}
-                                                    onChange={(e) => {
-                                                        const newPassengers = [...passengers];
-                                                        newPassengers[index].email = e.target.value;
-                                                        setPassengers(newPassengers);
-                                                    }}
-                                                />
+                                                <div className="relative">
+                                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                        <EnvelopeIcon className="h-5 w-5 text-gray-400" />
+                                                    </div>
+                                                    <input
+                                                        type="email"
+                                                        required
+                                                        className="pl-10 block w-full rounded-lg border-gray-200/50 shadow-sm p-2 border focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
+                                                        value={payerDetails.email}
+                                                        onChange={(e) => setPayerDetails({ ...payerDetails, email: e.target.value })}
+                                                        placeholder="john@example.com"
+                                                    />
+                                                </div>
                                             </div>
-                                            <div>
+                                            <div className="space-y-2 md:col-span-2 lg:col-span-1">
                                                 <label className="block text-sm font-medium text-gray-700">
                                                     Phone Number
                                                 </label>
-                                                <input
-                                                    type="tel"
-                                                    required
-                                                    className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                                    value={passenger.phone}
-                                                    onChange={(e) => {
-                                                        const newPassengers = [...passengers];
-                                                        newPassengers[index].phone = e.target.value;
-                                                        setPassengers(newPassengers);
-                                                    }}
-                                                />
+                                                <div className="relative">
+                                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                        <PhoneIcon className="h-5 w-5 text-gray-400" />
+                                                    </div>
+                                                    <input
+                                                        type="tel"
+                                                        required
+                                                        className="pl-10 block w-full rounded-lg border-gray-200/50 shadow-sm p-2 border focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
+                                                        value={payerDetails.phone}
+                                                        onChange={(e) => setPayerDetails({ ...payerDetails, phone: e.target.value })}
+                                                        placeholder="+1 (555) 000-0000"
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-
-                            <div className="flex items-center justify-between pt-4">
-                                <div className="text-lg font-bold">
-                                    Total: ${Number(price) * passengers.length}
                                 </div>
+
+                                {/* Passenger Details Cards */}
+                                {passengers.map((passenger, index) => (
+                                    <motion.div
+                                        key={index}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.2 + (index * 0.1) }}
+                                        className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+                                    >
+                                        <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                                            <h3 className="text-lg font-semibold text-gray-900">
+                                                Passenger {index + 1}
+                                            </h3>
+                                        </div>
+                                        <div className="px-6 py-6 space-y-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="space-y-2">
+                                                    <label className="block text-sm font-medium text-gray-700">
+                                                        Full Name
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        required
+                                                        className="block w-full rounded-lg border-gray-200/50 shadow-sm p-2 border focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
+                                                        value={passenger.name}
+                                                        onChange={(e) => handlePassengerChange(passenger.id, 'name', e.target.value)}
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="block text-sm font-medium text-gray-700">
+                                                        Email
+                                                    </label>
+                                                    <input
+                                                        type="email"
+                                                        required
+                                                        className="block w-full rounded-lg border-gray-200/50 shadow-sm p-2 border focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
+                                                        value={passenger.email}
+                                                        onChange={(e) => handlePassengerChange(passenger.id, 'email', e.target.value)}
+                                                    />
+                                                </div>
+                                                <div className="space-y-2 md:col-span-2 lg:col-span-1">
+                                                    <label className="block text-sm font-medium text-gray-700">
+                                                        Phone Number
+                                                    </label>
+                                                    <input
+                                                        type="tel"
+                                                        required
+                                                        className="block w-full rounded-lg border-gray-200/50 shadow-sm p-2 border focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
+                                                        value={passenger.phone}
+                                                        onChange={(e) => handlePassengerChange(passenger.id, 'phone', e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                ))}
+
+                                {/* Seat Selection Card */}
+                                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                                    <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                                        <div className="flex items-center justify-between">
+                                            <h2 className="text-lg font-semibold text-gray-900">Select Your Seats</h2>
+                                            <span className="text-sm text-gray-500">
+                                                Choose {seats} seats
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="px-6 py-6">
+                                        <SeatSelection
+                                            occupiedSeats={[]}
+                                            maxSeats={parseInt(seats as string)}
+                                            onSeatSelect={(selectedSeats) => {
+                                                console.log('Selected seats:', selectedSeats);
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Submit Button */}
                                 <motion.button
-                                    whileHover={{ scale: 1.02 }}
+                                    whileHover={{ scale: 1.01 }}
                                     whileTap={{ scale: 0.98 }}
                                     type="submit"
-                                    className="bg-blue-600 text-white px-8 py-3 rounded-xl hover:bg-blue-700 
-                                    transition-colors duration-200 flex items-center space-x-2"
+                                    disabled={isLoading}
+                                    className="w-full bg-blue-600 text-white px-8 py-4 rounded-xl hover:bg-blue-700 
+                                    transition-colors duration-200 flex items-center justify-center gap-2 shadow-sm
+                                    disabled:bg-blue-400 disabled:cursor-not-allowed font-medium text-lg"
                                 >
-                                    Proceed to Payment
+                                    {isLoading ? (
+                                        <>
+                                            <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                            </svg>
+                                            <span>Processing your booking...</span>
+                                        </>
+                                    ) : (
+                                        'Complete Booking'
+                                    )}
                                 </motion.button>
-                            </div>
-                        </form>
-                    </motion.div>
+                            </form>
+                        </motion.div>
 
-                    {/* Booking Summary */}
-                    <div className="col-span-1">
-                        <BookingSummary from={from} to={to} price={price} date={date} route={route} />
+                        {/* Booking Summary Section - Right Side */}
+                        <div className="lg:col-span-1">
+                            <div className="sticky top-8">
+                                <BookingSummary
+                                    route={route}
+                                    date={date}
+                                    from={from}
+                                    to={to}
+                                    price={price}
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

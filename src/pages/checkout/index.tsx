@@ -25,6 +25,7 @@ function Checkout() {
     const [seatQuantity, setSeatQuantity] = useState<number>(
         typeof seats === 'string' ? parseInt(seats) : 1
     );
+    const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
 
     // Add handler for seat quantity updates
     const handleSeatQuantityChange = (newQuantity: number) => {
@@ -48,6 +49,7 @@ function Checkout() {
                 bookerPhone: payerDetails.phone,
                 bookerEmail: payerDetails.email,
                 passengers: [],
+                selectedSeats
             };
 
             const response: any = await api.post('/bookings/create', bookingData);
@@ -88,7 +90,7 @@ function Checkout() {
                             transition={{ delay: 0.2 }}
                             className="lg:col-span-2 space-y-8"
                         >
-                            <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="space-y-6">
                                 {/* Payer Details Card */}
                                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                                     <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
@@ -198,6 +200,7 @@ function Checkout() {
                                             maxSeats={parseInt(seatQuantity as unknown as string)}
                                             onSeatSelect={(selectedSeats) => {
                                                 console.log('Selected seats:', selectedSeats);
+                                                setSelectedSeats(selectedSeats)
                                             }}
                                         />
                                     </div>
@@ -207,7 +210,7 @@ function Checkout() {
                                 <motion.button
                                     whileHover={{ scale: 1.01 }}
                                     whileTap={{ scale: 0.98 }}
-                                    type="submit"
+                                    onClick={handleSubmit}
                                     disabled={isLoading}
                                     className="w-full bg-blue-600 text-white px-8 py-4 rounded-xl hover:bg-blue-700 
                                     transition-colors duration-200 flex items-center justify-center gap-2 shadow-sm
@@ -225,7 +228,7 @@ function Checkout() {
                                         'Complete Booking'
                                     )}
                                 </motion.button>
-                            </form>
+                            </div>
                         </motion.div>
 
                         {/* Booking Summary Section - Right Side */}

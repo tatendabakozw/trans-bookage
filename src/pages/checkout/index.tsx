@@ -42,7 +42,7 @@ function Checkout() {
         try {
             const bookingData = {
                 busId,
-                seatsBooked: parseInt(seats as string),
+                seatsBooked: parseInt(seatQuantity as unknown as string),
                 totalPrice: parseInt(price as string) * parseInt(seats as string),
                 bookerName: payerDetails.name,
                 bookerPhone: payerDetails.phone,
@@ -195,7 +195,7 @@ function Checkout() {
                                     <div className="px-6 py-6">
                                         <SeatSelection
                                             occupiedSeats={[]}
-                                            maxSeats={parseInt(seats as string)}
+                                            maxSeats={parseInt(seatQuantity as unknown as string)}
                                             onSeatSelect={(selectedSeats) => {
                                                 console.log('Selected seats:', selectedSeats);
                                             }}

@@ -4,6 +4,7 @@ import DashboardLayout from '@/layouts/DashboardLayout';
 import { MapPinIcon, ClockIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import api from '@/config/apiClient';
 import { useRouter } from 'next/router';
+import CitySelect from '@/components/dropdown/city-select';
 
 interface BusRoute {
     routeName: string;
@@ -15,6 +16,12 @@ interface BusRoute {
     price: number;
     seatsAvailable: number;
     busType: string;
+}
+
+interface City {
+    id: number;
+    name: string;
+    region: string;
 }
 
 function Create() {
@@ -32,12 +39,19 @@ function Create() {
         busType: 'Standard'
     });
 
+    const handleCityChange = (type: 'startingPoint' | 'destination', city: City) => {
+        setFormData(prev => ({
+            ...prev,
+            [type]: city.name
+        }));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
         try {
-            const response:any = await api.post<BusRoute>('/bus/create', formData);
+            const response: any = await api.post<BusRoute>('/bus/create', formData);
 
             // toast.success('Route created successfully!');
             // Reset form
@@ -106,13 +120,9 @@ function Create() {
                                     <MapPinIcon className="w-4 h-4 mr-2 text-blue-600" />
                                     Starting Point
                                 </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={formData.startingPoint}
-                                    onChange={(e) => setFormData({ ...formData, startingPoint: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Enter starting point"
+                                <CitySelect
+                                    value={formData.startingPoint ? { id: 0, name: formData.startingPoint, region: '' } : null}
+                                    onChange={(city) => handleCityChange('startingPoint', city)}
                                 />
                             </div>
 
@@ -121,13 +131,9 @@ function Create() {
                                     <MapPinIcon className="w-4 h-4 mr-2 text-blue-600" />
                                     Destination
                                 </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={formData.destination}
-                                    onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Enter destination"
+                                <CitySelect
+                                    value={formData.destination ? { id: 0, name: formData.destination, region: '' } : null}
+                                    onChange={(city) => handleCityChange('destination', city)}
                                 />
                             </div>
 

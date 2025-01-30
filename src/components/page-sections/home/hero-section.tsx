@@ -2,6 +2,22 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import { MapPinIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import CitySelect from '@/components/dropdown/city-select';
+
+interface City {
+    id: number;
+    name: string;
+    region: string;
+}
+
+// Update state interface
+interface FormData {
+    from: string;
+    to: string;
+    date: string;
+}
+
+
 
 const HeroSection = () => {
     const router = useRouter();
@@ -10,6 +26,14 @@ const HeroSection = () => {
         to: '',
         date: '',
     });
+
+    // Inside HeroSection component
+    const handleCityChange = (type: 'from' | 'to', city: City) => {
+        setFormData(prev => ({
+            ...prev,
+            [type]: city.name
+        }));
+    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -36,7 +60,7 @@ const HeroSection = () => {
             className="relative min-h-screen bg-gradient-to-b from-sky-50 to-white"
         >
             <div className="absolute inset-0 bg-white bg-opacity-60"></div>
-         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-20 min-h-screen flex flex-col justify-center">
+            <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-20 min-h-screen flex flex-col justify-center">
                 <div className="max-w-4xl mx-auto w-full space-y-12">
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
@@ -59,47 +83,38 @@ const HeroSection = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-100/50 p-8 md:p-10 shadow-2xl"
+                        className="bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-100/50 p-8 shadow-xl"
                     >
-                        <form onSubmit={handleSearch} className="space-y-8">
+                        <form onSubmit={handleSearch} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {/* From City */}
                                 <div className="space-y-2">
                                     <label className="flex items-center text-sm font-medium text-gray-700">
-                                        <MapPinIcon className="w-4 h-4 mr-2 text-blue-600" />
+                                        <MapPinIcon className="w-4 h-4 mr-2 text-red-500" />
                                         From
                                     </label>
-                                    <input
-                                        type="text"
-                                        name="from"
-                                        value={formData.from}
-                                        onChange={handleInputChange}
-                                        className="w-full px-4 py-3.5 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 
-                                               transition-all duration-200 placeholder:text-gray-400"
-                                        placeholder="Enter departure city"
-                                        required
+                                    <CitySelect
+                                        value={formData.from ? { id: 0, name: formData.from, region: '' } : null}
+                                        onChange={(city) => handleCityChange('from', city)}
                                     />
                                 </div>
 
+                                {/* To City */}
                                 <div className="space-y-2">
                                     <label className="flex items-center text-sm font-medium text-gray-700">
-                                        <MapPinIcon className="w-4 h-4 mr-2 text-blue-600" />
+                                        <MapPinIcon className="w-4 h-4 mr-2 text-red-500" />
                                         To
                                     </label>
-                                    <input
-                                        type="text"
-                                        name="to"
-                                        value={formData.to}
-                                        onChange={handleInputChange}
-                                        className="w-full px-4 py-3.5 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 
-                                               transition-all duration-200 placeholder:text-gray-400"
-                                        placeholder="Enter destination city"
-                                        required
+                                    <CitySelect
+                                        value={formData.to ? { id: 0, name: formData.to, region: '' } : null}
+                                        onChange={(city) => handleCityChange('to', city)}
                                     />
                                 </div>
 
+                                {/* Date Input */}
                                 <div className="space-y-2">
                                     <label className="flex items-center text-sm font-medium text-gray-700">
-                                        <CalendarIcon className="w-4 h-4 mr-2 text-blue-600" />
+                                        <CalendarIcon className="w-4 h-4 mr-2 text-red-500" />
                                         Date
                                     </label>
                                     <input
@@ -107,26 +122,20 @@ const HeroSection = () => {
                                         name="date"
                                         value={formData.date}
                                         onChange={handleInputChange}
-                                        className="w-full px-4 py-3.5 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 
-                                               transition-all duration-200"
-                                        min={new Date().toISOString().split('T')[0]}
+                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
                                         required
                                     />
                                 </div>
                             </div>
 
-                            <motion.button
-                                whileHover={{ scale: 1.01 }}
-                                whileTap={{ scale: 0.98 }}
-                                type="submit"
-                                className="w-full bg-gradient-to-r from-red-400 to-red-600 text-white text-lg font-medium 
-                                       py-4 px-8 rounded-xl hover:from-blue-700 hover:to-purple-700 
-                                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                                       flex items-center justify-center gap-3 transition-all duration-300
-                                       shadow-lg hover:shadow-xl"
-                            >
-                                Search Buses
-                            </motion.button>
+                            <div className="text-center">
+                                <button
+                                    type="submit"
+                                    className="px-8 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-medium hover:from-red-600 hover:to-red-700 transition-colors"
+                                >
+                                    Search Buses
+                                </button>
+                            </div>
                         </form>
                     </motion.div>
 

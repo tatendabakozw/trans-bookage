@@ -1,8 +1,8 @@
+import BusSearchComponent from '@/components/page-sections/booking/bus-search-component';
+import BookBusComponent from '@/components/book-bus-component/book-bus-component';
 import React, { useEffect, useRef, useState } from 'react';
 import GeneralLayout from '@/layouts/GeneralLayout';
-import BusSearchComponent from '@/components/page-sections/booking/bus-search-component';
 import { useRouter } from 'next/router';
-import BookBusComponent from '@/components/book-bus-component/book-bus-component';
 import api from '@/config/apiClient';
 
 const BusSearch = () => {
@@ -90,7 +90,7 @@ const BusSearch = () => {
                         <p className="text-center text-gray-600">Loading buses...</p>
                     ) : filteredBuses.length > 0 ? (
                         filteredBuses.map((route: any) => (
-                            <BookBusComponent key={route._id} id={route._id} {...route} passengers={searchData.passengers} />
+                            <BookBusComponent key={route._id} searchedDate={searchData.date} id={route._id} {...route} passengers={searchData.passengers} />
                         ))
                     ) : (
                         <p className="text-center text-gray-600">No buses found for your search criteria.</p>

@@ -6,7 +6,6 @@ import {
   CalendarIcon, 
   UserIcon,
   ChevronRightIcon,
-  CurrencyDollarIcon
 } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 
@@ -21,7 +20,8 @@ interface BookBusComponentProps {
     price: number;
     seatsAvailable: number;
     busType: string;
-    passengers:any
+    passengers:any;
+    searchedDate?:string
   }
 
 const BookBusComponent = ({
@@ -35,9 +35,9 @@ const BookBusComponent = ({
     price,
     seatsAvailable,
     busType,
-    passengers
+    passengers,
+    searchedDate
 }: BookBusComponentProps) => {
-  // Calculate the percentage of seats filled
  
   const router = useRouter();
   const seatPercentage = Math.min((seatsAvailable / 50) * 100, 100);
@@ -56,7 +56,7 @@ const BookBusComponent = ({
       route: routeName,
       from: startingPoint,
       to: destination,
-      date: travelDate,
+      date: searchedDate as unknown as string,
       pickup: pickupTime,
       dropoff: dropOffTime,
       price: price.toString(),
@@ -95,7 +95,7 @@ const BookBusComponent = ({
         <div className="space-y-2">
           <div className="flex items-center space-x-2 text-gray-600">
             <CalendarIcon className="w-4 h-4 text-blue-600" />
-            <span className="text-sm">{travelDate}</span>
+            <span className="text-sm">{searchedDate}</span>
           </div>
           <div className="flex items-center space-x-2 text-gray-600">
             <ClockIcon className="w-4 h-4 text-blue-600" />

@@ -72,6 +72,15 @@ function BusDetails() {
     }
   };
 
+
+  const getOccupiedSeats = () => {
+    if (!bus) return [];
+    return bus.bookings.reduce((acc: number[], booking:any) => {
+      return [...acc, ...booking.selectedSeats];
+    }, []);
+  };
+
+
   if (isLoading) {
     return (
       <DashboardLayout>

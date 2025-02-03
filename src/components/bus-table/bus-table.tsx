@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+// bus-table.tsx
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
-    PencilIcon,
-    TrashIcon,
-    ArrowUpIcon,
-    ArrowDownIcon,
-    InformationCircleIcon
+    CalendarIcon,
+    MapPinIcon,
+    UserGroupIcon,
+    CurrencyDollarIcon,
+    ArrowPathIcon,
+    ChevronUpDownIcon
 } from '@heroicons/react/24/outline';
 import api from '@/config/apiClient';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 interface Bus {
     _id: string;
@@ -24,11 +26,18 @@ interface Bus {
 }
 
 function BusTable() {
-    const [buses, setBuses] = useState<Bus[] | any>([]);
+    const router = useRouter()
+    const [buses, setBuses] = useState<Bus[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [sortField, setSortField] = useState<keyof Bus>('travelDate');
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+    const sortOptions = [
+        { label: 'Date', value: 'travelDate' },
+        { label: 'Price', value: 'price' },
+        { label: 'Available Seats', value: 'seatsAvailable' }
+    ];
 
     useEffect(() => {
         fetchBuses();
@@ -36,25 +45,24 @@ function BusTable() {
 
     const fetchBuses = async () => {
         try {
-            const busData:any = await api.get<Bus[]>('/bus/all');
-            setBuses(busData.buses); // Direct assignment since data is already extracted
+            const response: any = await api.get<{ buses: Bus[] }>('/bus/all');
+            setBuses(response.buses);
         } catch (err) {
             setError('Failed to fetch buses');
-            console.error(err);
         } finally {
             setIsLoading(false);
         }
     };
 
-    console.log("ferced besse", buses);
-
-    const handleSort = (field: keyof Bus) => {
-        if (field === sortField) {
-            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-        } else {
-            setSortField(field);
-            setSortDirection('asc');
-        }
+    const getSortedBuses = () => {
+        return [...buses].sort((a, b) => {
+            const aValue = a[sortField];
+            const bValue = b[sortField];
+            if (sortDirection === 'asc') {
+                return aValue > bValue ? 1 : -1;
+            }
+            return aValue < bValue ? 1 : -1;
+        });
     };
 
     if (isLoading) {
@@ -66,104 +74,100 @@ function BusTable() {
     }
 
     if (error) {
-        return (
-            <div className="text-center text-red-600 p-4">
-                {error}
-            </div>
-        );
+        return <div className="text-center text-red-600 p-4">{error}</div>;
     }
 
     return (
-        <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                    <tr>
-                        {[
-                            { key: 'startingPoint', label: 'From' },
-                            { key: 'destination', label: 'To' },
-                            { key: 'travelDate', label: 'Date' },
-                            { key: 'pickupTime', label: 'Pickup' },
-                            { key: 'price', label: 'Price' },
-                            { key: 'seatsAvailable', label: 'Seats' },
-                        ].map(({ key, label }) => (
-                            <th
-                                key={key}
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700"
-                                onClick={() => handleSort(key as keyof Bus)}
-                            >
-                                <div className="flex items-center space-x-1">
-                                    <span>{label}</span>
-                                    {sortField === key && (
-                                        sortDirection === 'asc' ?
-                                            <ArrowUpIcon className="w-4 h-4" /> :
-                                            <ArrowDownIcon className="w-4 h-4" />
-                                    )}
-                                </div>
-                            </th>
+        <div className="space-y-6">
+            {/* Header with sort controls */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                    <select
+                        value={sortField}
+                        onChange={(e) => setSortField(e.target.value as keyof Bus)}
+                        className="rounded-lg border-gray-200 text-sm"
+                    >
+                        {sortOptions.map(option => (
+                            <option key={option.value} value={option.value}>
+                                Sort by {option.label}
+                            </option>
                         ))}
-                        <th scope="col" className="px-6 py-3">
-                            <span className="sr-only">Actions</span>
-                        </th>
-                    </tr>
-                </thead>
+                    </select>
+                    <button
+                        onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
+                        className="p-2 hover:bg-gray-100 border border-zinc-200/50 rounded-lg"
+                    >
+                        <ChevronUpDownIcon className="h-5 w-5 text-gray-500" />
+                    </button>
+                </div>
+                <button
+                    onClick={fetchBuses}
+                    className="flex items-center px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 border border-zinc-200/50 rounded-lg"
+                >
+                    <ArrowPathIcon className="h-4 w-4 mr-2" />
+                    Refresh
+                </button>
+            </div>
 
-                <tbody className="bg-white divide-y divide-gray-200">
-                    {buses?.length > 0 ? (
-                        buses.map((bus:Bus) => (
-                            <motion.tr
-                                key={bus._id}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="hover:bg-gray-50"
+            {/* Grid of bus cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {getSortedBuses().map((bus, index) => (
+                    <motion.div
+                        key={bus._id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="bg-white rounded-xl border border-zinc-200/50 hover:shadow-md transition-shadow p-6 space-y-4"
+                    >
+                        <div className="flex justify-between items-start">
+                            <h3 className="font-semibold text-gray-900">{bus.routeName}</h3>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${bus.seatsAvailable > 10
+                                    ? 'bg-green-100 text-green-800'
+                                    : bus.seatsAvailable > 0
+                                        ? 'bg-yellow-100 text-yellow-800'
+                                        : 'bg-red-100 text-red-800'
+                                }`}>
+                                {bus.seatsAvailable} left
+                            </span>
+                        </div>
+
+                        <div className="space-y-2">
+                            <div className="flex items-center text-gray-600">
+                                <MapPinIcon className="h-4 w-4 mr-2 text-gray-400" />
+                                <span className="text-sm">
+                                    {bus.startingPoint} → {bus.destination}
+                                </span>
+                            </div>
+
+                            <div className="flex items-center text-gray-600">
+                                <CalendarIcon className="h-4 w-4 mr-2 text-gray-400" />
+                                <span className="text-sm">
+                                    {new Date(bus.travelDate).toLocaleDateString()} ({bus.pickupTime} - {bus.dropOffTime})
+                                </span>
+                            </div>
+
+                            <div className="flex items-center text-gray-600">
+                                <UserGroupIcon className="h-4 w-4 mr-2 text-gray-400" />
+                                <span className="text-sm">{bus.busType}</span>
+                            </div>
+
+                            <div className="flex items-center text-gray-600">
+                                <CurrencyDollarIcon className="h-4 w-4 mr-2 text-gray-400" />
+                                <span className="text-sm font-medium">${bus.price}</span>
+                            </div>
+                        </div>
+
+                        <div className="pt-4 flex justify-end">
+                            <button
+                                onClick={() => router.push(`/dashboard/bus/${bus._id}`)}
+                                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                             >
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">{bus.startingPoint}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">{bus.destination}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">
-                                        {new Date(bus.travelDate).toLocaleDateString()}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">{bus.pickupTime}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">${bus.price}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                        ${bus.seatsAvailable > 20 ? 'bg-green-100 text-green-800' :
-                                            bus.seatsAvailable > 5 ? 'bg-yellow-100 text-yellow-800' :
-                                                'bg-red-100 text-red-800'}`}>
-                                        {bus.seatsAvailable}
-                                    </span>
-                                </td>
-
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <div className="flex items-center space-x-3">
-                                        <Link href={`/dashboard/bus/${bus._id}`} className="text-zinc-600 hover:text-zinc-900">
-                                            <InformationCircleIcon className="w-5 h-5" />
-                                        </Link>
-                                        <button className="text-red-600 hover:text-red-900">
-                                            <TrashIcon className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                </td>
-                            </motion.tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
-                                No buses available at the moment.
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
+                                View Details →
+                            </button>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
         </div>
     );
 }

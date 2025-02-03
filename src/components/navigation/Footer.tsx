@@ -52,15 +52,15 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center text-sm text-gray-600">
                 <MapPinIcon className="h-5 w-5 text-red-600 mr-2" />
-                1234 Travel Street, City
+                Kwame Nkruma | Africa Connect
               </li>
               <li className="flex items-center text-sm text-gray-600">
                 <PhoneIcon className="h-5 w-5 text-red-600 mr-2" />
-                (123) 456-7890
+                +263 77 230 3766
               </li>
               <li className="flex items-center text-sm text-gray-600">
                 <EnvelopeIcon className="h-5 w-5 text-red-600 mr-2" />
-                info@africaconnect.com
+                info@africaconnectzw.com
               </li>
             </ul>
           </div>

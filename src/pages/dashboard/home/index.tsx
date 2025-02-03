@@ -12,6 +12,7 @@ import React, { useState } from "react";
 
 const Overview = () => {
     const router = useRouter();
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>();
     const [selected_option, setSelectedOption] = useState({
         name: "Active",
         _id: "active",
@@ -29,10 +30,10 @@ const Overview = () => {
                 <div className="flex flex-row items-start justify-between">
                     <div className="flex flex-col space-y-1">
                         <p className="text-start font-bold heading-text text-3xl ">
-                            Dashboard Overview
+                            Routes management overview
                         </p>
                         <p className="text-start main-text text-sm text-zinc-500 max-w-2xl">
-                            Pump management. Look what you can change
+                            Mnage your routes from here.
                         </p>
                     </div>
                     <button
@@ -77,7 +78,9 @@ const Overview = () => {
                         <BusTable />
                     </div>
                     <div className="col-span-1">
-                        <Calendar />
+                        <Calendar onDateSelect={(date: any) => {
+                            setSelectedDate(date);
+                        }} />
                     </div>
                 </div>
             </div>

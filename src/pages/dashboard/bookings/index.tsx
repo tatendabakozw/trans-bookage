@@ -1,214 +1,248 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import {
-  ArrowUpIcon,
-  ArrowDownIcon,
+// index.tsx
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  CalendarIcon, 
   MagnifyingGlassIcon,
   ArrowPathIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon
-} from "@heroicons/react/24/outline";
-import api from "@/config/apiClient";
-import DashboardLayout from "@/layouts/DashboardLayout";
+  ChevronDownIcon 
+} from '@heroicons/react/24/outline';
+import DashboardLayout from '@/layouts/DashboardLayout';
+import api from '@/config/apiClient';
+import Calendar from '@/components/clock/Calender';
 
 interface Booking {
   _id: string;
-  bookerName: string;
-  bookerPhone: string;
-  bookerEmail: string;
-  seatsBooked: number;
-  totalPrice: number;
   bookingDate: string;
+  bookerName: string;
+  bookerEmail: string;
+  bookerPhone: string;
+  totalPrice: number;
+  seatsBooked: number;
 }
 
-export default function ManageBookings() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<string>("createdAt");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [page, setPage] = useState<number>(1);
-  const perPage = 10;
-  const [keyword, setKeyword] = useState<string>("");
+interface BookingGroup {
+  date: string;
+  bookings: Booking[];
+  totalBookings: number;
+  totalAmount: number;
+}
 
-  useEffect(() => {
-    fetchBookings();
-  }, [sortBy, sortOrder, page, keyword]);
+interface BookingResponse {
+  data: BookingGroup[];
+  meta: {
+    total: number;
+    groupedDays: number;
+  };
+}
+
+function BookingsList() {
+  const [bookingGroups, setBookingGroups] = useState<BookingGroup[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [totalPages, setTotalPages] = useState(0);
+  const perPage = 10;
+
+  const toggleGroup = (date: string) => {
+    setExpandedGroups(prev =>
+      prev.includes(date)
+        ? prev.filter(d => d !== date)
+        : [...prev, date]
+    );
+  };
 
   const fetchBookings = async () => {
-    setLoading(true);
-    setError(null);
     try {
-      const queryParams = new URLSearchParams({
-        keyword,
-      });
-      const response: any = await api.get(`/bookings/all?${queryParams}`);
-      setBookings(response.bookings);
+      setIsLoading(true);
+      const response:any = await api.get<BookingResponse>(
+        `/bookings/all?page=${page}&perPage=${perPage}&keyword=${searchTerm}`
+      );
+      setBookingGroups(response.data);
+      setTotalPages(Math.ceil(response.meta.total / perPage));
     } catch (err) {
-      setError("Failed to fetch bookings.");
+      setError('Failed to fetch bookings');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const toggleSortOrder = () => {
-    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-  };
+  useEffect(() => {
+    fetchBookings();
+  }, [page, searchTerm]);
+
+  const filteredBookings = bookingGroups?.filter(group => {
+    if (!selectedDate) return true;
+    return new Date(group.date).toDateString() === selectedDate.toDateString();
+  });
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Booking Management</h1>
-          <p className="mt-2 text-gray-600">Manage and track all bus bookings</p>
-        </div>
-
-        {/* Search and Filters */}
-        <div className="mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center">
-          <div className="relative w-full sm:w-96">
-            <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
-              placeholder="Search bookings..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
-            />
-          </div>
-
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={fetchBookings}
-            className="flex items-center px-4 py-2 text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50"
-          >
-            <ArrowPathIcon className="h-5 w-5 mr-2" />
-            Refresh
-          </motion.button>
-        </div>
-
-        {/* Bookings Table */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
+      <div className="py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Sidebar with Calendar */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-24">
+                <Calendar 
+                  selectedDate={selectedDate}
+                  onDateSelect={(date:any) => {
+                    setSelectedDate(date);
+                    setSearchTerm('');
+                    setPage(1);
+                  }}
+                />
+              </div>
             </div>
-          ) : error ? (
-            <div className="flex justify-center items-center h-64 text-red-600">{error}</div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      {[
-                        { key: "bookerName", label: "Customer" },
-                        { key: "bookerEmail", label: "Email" },
-                        { key: "bookerPhone", label: "Phone" },
-                        { key: "createdAt", label: "Date" },
-                        { key: "status", label: "Status" }
-                      ].map((column) => (
-                        <th
-                          key={column.key}
-                          onClick={() => {
-                            setSortBy(column.key);
-                            toggleSortOrder();
-                          }}
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700"
-                        >
-                          <div className="flex items-center space-x-1">
-                            <span>{column.label}</span>
-                            {sortBy === column.key && (
-                              sortOrder === "asc" ?
-                                <ArrowUpIcon className="w-4 h-4" /> :
-                                <ArrowDownIcon className="w-4 h-4" />
-                            )}
-                          </div>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {bookings.map((booking) => (
-                      <motion.tr
-                        key={booking._id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="hover:bg-gray-50"
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{booking.bookerName}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-600">{booking.bookerEmail}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-600">{booking.bookerPhone}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-600">
-                            {/* {new Date(booking.createdAt).toLocaleDateString()} */}
-                            {/* created at */}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                            Confirmed
-                          </span>
-                        </td>
-                      </motion.tr>
-                    ))}
-                  </tbody>
-                </table>
+
+            {/* Main Content */}
+            <div className="lg:col-span-3">
+              {/* Search Bar */}
+              <div className="flex items-center gap-4 mb-6">
+                <div className="relative flex-1">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-zinc-400" />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search bookings..."
+                    className="w-full pl-10 pr-4 py-2 border border-zinc-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  />
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={fetchBookings}
+                  className="flex items-center px-4 py-2 text-zinc-600 bg-white border border-zinc-200 rounded-xl hover:bg-zinc-50"
+                >
+                  <ArrowPathIcon className="h-5 w-5 mr-2" />
+                  Refresh
+                </motion.button>
               </div>
 
-              {/* Pagination */}
-              <div className="flex items-center justify-between px-6 py-3 border-t border-gray-200">
-                <div className="flex-1 flex justify-between sm:hidden">
-                  <button
-                    onClick={() => setPage(Math.max(1, page - 1))}
-                    disabled={page === 1}
-                    className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    onClick={() => setPage(page + 1)}
-                    className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    Next
-                  </button>
+              {/* Booking Groups */}
+              {isLoading ? (
+                <div className="animate-pulse space-y-4">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="h-48 bg-zinc-200 rounded-lg" />
+                  ))}
                 </div>
-                <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-sm text-gray-700">
-                      Showing page <span className="font-medium">{page}</span>
-                    </p>
-                  </div>
-                  <div>
-                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+              ) : error ? (
+                <div className="text-red-500">{error}</div>
+              ) : (
+                <div className="space-y-6">
+                  {filteredBookings.map((group) => (
+                    <motion.div
+                      key={group.date}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-white shadow-sm rounded-lg overflow-hidden"
+                    >
                       <button
-                        onClick={() => setPage(Math.max(1, page - 1))}
-                        disabled={page === 1}
-                        className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                        onClick={() => toggleGroup(group.date)}
+                        className="w-full px-6 py-4 bg-zinc-200/50 border-b border-zinc-200/50 hover:bg-zinc-100 transition-colors"
                       >
-                        <ChevronLeftIcon className="h-5 w-5" />
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <CalendarIcon className="h-5 w-5 text-zinc-400 mr-2" />
+                            <h3 className="text-lg font-medium text-zinc-900">
+                              {new Date(group.date).toLocaleDateString('en-US', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              })}
+                            </h3>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="text-sm text-zinc-500">
+                              {group.totalBookings} bookings · ${group.totalAmount}
+                            </div>
+                            <ChevronDownIcon 
+                              className={`h-5 w-5 text-zinc-400 transition-transform ${
+                                expandedGroups.includes(group.date) ? 'rotate-180' : ''
+                              }`}
+                            />
+                          </div>
+                        </div>
                       </button>
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                      >
-                        <ChevronRightIcon className="h-5 w-5" />
-                      </button>
-                    </nav>
+
+                      <AnimatePresence>
+                        {expandedGroups.includes(group.date) && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <div className="divide-y divide-zinc-200">
+                              {group.bookings.map((booking) => (
+                                <motion.div
+                                  key={booking._id}
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  className="px-6 py-4"
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <p className="font-medium text-zinc-900">
+                                        {booking.bookerName}
+                                      </p>
+                                      <p className="text-sm text-zinc-500">
+                                        {booking.bookerEmail}
+                                      </p>
+                                    </div>
+                                    <div className="text-sm">
+                                      <p className="font-medium text-zinc-900">
+                                        ${booking.totalPrice}
+                                      </p>
+                                      <p className="text-zinc-500">
+                                        {booking.seatsBooked} seats
+                                      </p>
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  ))}
+
+                  {/* Pagination */}
+                  <div className="flex justify-between items-center pt-6">
+                    <button
+                      onClick={() => setPage(Math.max(1, page - 1))}
+                      disabled={page === 1}
+                      className="px-4 py-2 text-sm text-zinc-600 bg-white border border-zinc-200 rounded-xl disabled:opacity-50"
+                    >
+                      Previous
+                    </button>
+                    <span className="text-sm text-zinc-600">
+                      Page {page} of {totalPages}
+                    </span>
+                    <button
+                      onClick={() => setPage(Math.min(totalPages, page + 1))}
+                      disabled={page === totalPages}
+                      className="px-4 py-2 text-sm text-zinc-600 bg-white border border-zinc-200 rounded-xl disabled:opacity-50"
+                    >
+                      Next
+                    </button>
                   </div>
                 </div>
-              </div>
-            </>
-          )}
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </DashboardLayout>
   );
 }
+
+export default BookingsList;

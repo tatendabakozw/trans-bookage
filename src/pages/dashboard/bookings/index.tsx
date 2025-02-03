@@ -5,11 +5,13 @@ import {
   CalendarIcon, 
   MagnifyingGlassIcon,
   ArrowPathIcon,
-  ChevronDownIcon 
+  ChevronDownIcon, 
+  ChevronRightIcon
 } from '@heroicons/react/24/outline';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import api from '@/config/apiClient';
 import Calendar from '@/components/clock/Calender';
+import { useRouter } from 'next/router';
 
 interface Booking {
   _id: string;
@@ -42,6 +44,7 @@ function BookingsList() {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
+  const router = useRouter()
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [totalPages, setTotalPages] = useState(0);
@@ -177,36 +180,43 @@ function BookingsList() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
+                            
                             transition={{ duration: 0.2 }}
                           >
                             <div className="divide-y divide-zinc-200">
                               {group.bookings.map((booking) => (
-                                <motion.div
-                                  key={booking._id}
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  exit={{ opacity: 0 }}
-                                  className="px-6 py-4"
-                                >
-                                  <div className="flex items-center justify-between">
-                                    <div>
-                                      <p className="font-medium text-zinc-900">
-                                        {booking.bookerName}
-                                      </p>
-                                      <p className="text-sm text-zinc-500">
-                                        {booking.bookerEmail}
-                                      </p>
-                                    </div>
-                                    <div className="text-sm">
-                                      <p className="font-medium text-zinc-900">
-                                        ${booking.totalPrice}
-                                      </p>
-                                      <p className="text-zinc-500">
-                                        {booking.seatsBooked} seats
-                                      </p>
-                                    </div>
-                                  </div>
-                                </motion.div>
+                               <motion.div
+                               key={booking._id}
+                               onClick={() => router.push(`/dashboard/bookings/${booking._id}`)}
+                               initial={{ opacity: 0 }}
+                               animate={{ opacity: 1 }}
+                               exit={{ opacity: 0 }}
+                               className="px-6 py-4 hover:bg-zinc-50 cursor-pointer group"
+                             >
+                               <div className="flex items-center justify-between">
+                                 <div>
+                                   <p className="font-medium text-zinc-900">
+                                     {booking.bookerName}
+                                   </p>
+                                   <p className="text-sm text-zinc-500">
+                                     {booking.bookerEmail}
+                                   </p>
+                                 </div>
+                                 <div className="flex items-center space-x-4">
+                                   <div className="text-sm text-right">
+                                     <p className="font-medium text-zinc-900">
+                                       ${booking.totalPrice}
+                                     </p>
+                                     <p className="text-zinc-500">
+                                       {booking.seatsBooked} seats
+                                     </p>
+                                   </div>
+                                   <ChevronRightIcon 
+                                     className="h-5 w-5 text-zinc-400 group-hover:text-zinc-600 transition-colors"
+                                   />
+                                 </div>
+                               </div>
+                             </motion.div>
                               ))}
                             </div>
                           </motion.div>

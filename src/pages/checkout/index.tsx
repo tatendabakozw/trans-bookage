@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import GeneralLayout from '@/layouts/GeneralLayout';
@@ -16,6 +16,7 @@ interface PayerDetail {
 function Checkout() {
     const router = useRouter();
     const { busId, route, from, to, date, price, seats } = router.query;
+    const [totalPrice, setTotalPrice] = useState<number>(0);
     const [isLoading, setIsLoading] = useState(false);
     const [payerDetails, setPayerDetails] = useState<PayerDetail>({
         name: '',
@@ -36,6 +37,12 @@ function Checkout() {
 
     };
 
+    useEffect(() => {
+        const seatPrice = typeof price === 'string' ? parseInt(price) : 0;
+        const numSeats = typeof seatQuantity === 'number' ? seatQuantity : 0;
+        setTotalPrice(seatPrice * numSeats);
+    }, [price, seatQuantity]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
@@ -43,8 +50,8 @@ function Checkout() {
         try {
             const bookingData = {
                 busId,
-                seatsBooked: parseInt(seatQuantity as unknown as string),
-                totalPrice: parseInt(price as string) * parseInt(seats as string),
+                seatsBooked: seatQuantity,
+                totalPrice: totalPrice, // Use calculated total price
                 bookerName: payerDetails.name,
                 bookerPhone: payerDetails.phone,
                 bookerEmail: payerDetails.email,
@@ -238,7 +245,7 @@ function Checkout() {
                                     date={date}
                                     from={from}
                                     to={to}
-                                    price={price}
+                                    price={totalPrice} // Use total price
                                 />
                             </div>
                         </div>

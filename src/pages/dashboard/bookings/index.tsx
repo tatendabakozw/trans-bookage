@@ -6,7 +6,8 @@ import {
   MagnifyingGlassIcon,
   ArrowPathIcon,
   ChevronDownIcon, 
-  ChevronRightIcon
+  ChevronRightIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import api from '@/config/apiClient';
@@ -44,7 +45,7 @@ function BookingsList() {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
-  const router = useRouter()
+  const router = useRouter();
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [totalPages, setTotalPages] = useState(0);
@@ -61,9 +62,20 @@ function BookingsList() {
   const fetchBookings = async () => {
     try {
       setIsLoading(true);
-      const response:any = await api.get<BookingResponse>(
-        `/bookings/all?page=${page}&perPage=${perPage}&keyword=${searchTerm}`
-      );
+      const params = new URLSearchParams({
+        page: page.toString(),
+        perPage: perPage.toString(),
+      });
+
+      if (searchTerm) {
+        params.append('keyword', searchTerm);
+      }
+
+      if (selectedDate) {
+        params.append('date', selectedDate.toISOString());
+      }
+
+      const response:any = await api.get<BookingResponse>(`/bookings/all?${params}`);
       setBookingGroups(response.data);
       setTotalPages(Math.ceil(response.meta.total / perPage));
     } catch (err) {
@@ -75,7 +87,13 @@ function BookingsList() {
 
   useEffect(() => {
     fetchBookings();
-  }, [page, searchTerm]);
+  }, [page, searchTerm, selectedDate]);
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedDate(undefined);
+    setPage(1);
+  };
 
   const filteredBookings = bookingGroups?.filter(group => {
     if (!selectedDate) return true;
@@ -92,7 +110,7 @@ function BookingsList() {
               <div className="sticky top-24">
                 <Calendar 
                   selectedDate={selectedDate}
-                  onDateSelect={(date:any) => {
+                  onDateSelect={(date) => {
                     setSelectedDate(date);
                     setSearchTerm('');
                     setPage(1);
@@ -116,6 +134,18 @@ function BookingsList() {
                   />
                 </div>
 
+                {(searchTerm || selectedDate) && (
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    onClick={clearFilters}
+                    className="flex items-center px-4 py-2 text-zinc-600 bg-white border border-zinc-200 rounded-xl hover:bg-zinc-50"
+                  >
+                    <XMarkIcon className="h-5 w-5 mr-2" />
+                    Clear Filters
+                  </motion.button>
+                )}
+
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -129,13 +159,18 @@ function BookingsList() {
 
               {/* Booking Groups */}
               {isLoading ? (
-                <div className="animate-pulse space-y-4">
+                <div className="space-y-4">
                   {[...Array(3)].map((_, i) => (
-                    <div key={i} className="h-48 bg-zinc-200 rounded-lg" />
+                    <div key={i} className="animate-pulse">
+                      <div className="h-16 bg-zinc-100 rounded-xl mb-2" />
+                      <div className="h-24 bg-zinc-50 rounded-xl" />
+                    </div>
                   ))}
                 </div>
               ) : error ? (
-                <div className="text-red-500">{error}</div>
+                <div className="text-center text-red-600 p-8 bg-red-50 rounded-xl">
+                  {error}
+                </div>
               ) : (
                 <div className="space-y-6">
                   {filteredBookings.map((group) => (
@@ -143,11 +178,11 @@ function BookingsList() {
                       key={group.date}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="bg-white shadow-sm rounded-lg overflow-hidden"
+                      className="bg-white shadow-sm rounded-xl overflow-hidden"
                     >
                       <button
                         onClick={() => toggleGroup(group.date)}
-                        className="w-full px-6 py-4 bg-zinc-200/50 border-b border-zinc-200/50 hover:bg-zinc-100 transition-colors"
+                        className="w-full px-6 py-4 bg-zinc-50 border-b border-zinc-200 hover:bg-zinc-100 transition-colors"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center">
@@ -180,43 +215,42 @@ function BookingsList() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            
                             transition={{ duration: 0.2 }}
                           >
                             <div className="divide-y divide-zinc-200">
                               {group.bookings.map((booking) => (
-                               <motion.div
-                               key={booking._id}
-                               onClick={() => router.push(`/dashboard/bookings/${booking._id}`)}
-                               initial={{ opacity: 0 }}
-                               animate={{ opacity: 1 }}
-                               exit={{ opacity: 0 }}
-                               className="px-6 py-4 hover:bg-zinc-50 cursor-pointer group"
-                             >
-                               <div className="flex items-center justify-between">
-                                 <div>
-                                   <p className="font-medium text-zinc-900">
-                                     {booking.bookerName}
-                                   </p>
-                                   <p className="text-sm text-zinc-500">
-                                     {booking.bookerEmail}
-                                   </p>
-                                 </div>
-                                 <div className="flex items-center space-x-4">
-                                   <div className="text-sm text-right">
-                                     <p className="font-medium text-zinc-900">
-                                       ${booking.totalPrice}
-                                     </p>
-                                     <p className="text-zinc-500">
-                                       {booking.seatsBooked} seats
-                                     </p>
-                                   </div>
-                                   <ChevronRightIcon 
-                                     className="h-5 w-5 text-zinc-400 group-hover:text-zinc-600 transition-colors"
-                                   />
-                                 </div>
-                               </div>
-                             </motion.div>
+                                <motion.div
+                                  key={booking._id}
+                                  onClick={() => router.push(`/dashboard/bookings/${booking._id}`)}
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  className="px-6 py-4 hover:bg-zinc-50 cursor-pointer group"
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <p className="font-medium text-zinc-900">
+                                        {booking.bookerName}
+                                      </p>
+                                      <p className="text-sm text-zinc-500">
+                                        {booking.bookerEmail}
+                                      </p>
+                                    </div>
+                                    <div className="flex items-center space-x-4">
+                                      <div className="text-sm text-right">
+                                        <p className="font-medium text-zinc-900">
+                                          ${booking.totalPrice}
+                                        </p>
+                                        <p className="text-zinc-500">
+                                          {booking.seatsBooked} seats
+                                        </p>
+                                      </div>
+                                      <ChevronRightIcon 
+                                        className="h-5 w-5 text-zinc-400 group-hover:text-zinc-600 transition-colors"
+                                      />
+                                    </div>
+                                  </div>
+                                </motion.div>
                               ))}
                             </div>
                           </motion.div>
@@ -226,25 +260,27 @@ function BookingsList() {
                   ))}
 
                   {/* Pagination */}
-                  <div className="flex justify-between items-center pt-6">
-                    <button
-                      onClick={() => setPage(Math.max(1, page - 1))}
-                      disabled={page === 1}
-                      className="px-4 py-2 text-sm text-zinc-600 bg-white border border-zinc-200 rounded-xl disabled:opacity-50"
-                    >
-                      Previous
-                    </button>
-                    <span className="text-sm text-zinc-600">
-                      Page {page} of {totalPages}
-                    </span>
-                    <button
-                      onClick={() => setPage(Math.min(totalPages, page + 1))}
-                      disabled={page === totalPages}
-                      className="px-4 py-2 text-sm text-zinc-600 bg-white border border-zinc-200 rounded-xl disabled:opacity-50"
-                    >
-                      Next
-                    </button>
-                  </div>
+                  {totalPages > 1 && (
+                    <div className="flex justify-between items-center pt-6">
+                      <button
+                        onClick={() => setPage(Math.max(1, page - 1))}
+                        disabled={page === 1}
+                        className="px-4 py-2 text-sm text-zinc-600 bg-white border border-zinc-200 rounded-xl disabled:opacity-50"
+                      >
+                        Previous
+                      </button>
+                      <span className="text-sm text-zinc-600">
+                        Page {page} of {totalPages}
+                      </span>
+                      <button
+                        onClick={() => setPage(Math.min(totalPages, page + 1))}
+                        disabled={page === totalPages}
+                        className="px-4 py-2 text-sm text-zinc-600 bg-white border border-zinc-200 rounded-xl disabled:opacity-50"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

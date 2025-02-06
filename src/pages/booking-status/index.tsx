@@ -32,7 +32,7 @@ function BookingStatus() {
                 setBooking(response);
 
                 if (response.paymentStatus === 'pending') {
-                    setTimeout(pollPaymentStatus, 5000); // Poll every 5 seconds
+                    setTimeout(pollPaymentStatus, 3000); // Poll every 3 seconds
                 }
             } catch (err) {
                 setError('Failed to check payment status');
@@ -45,10 +45,40 @@ function BookingStatus() {
     }, [id, booking?.pollUrl]);
 
     if (isLoading) return (
-        <div className="min-h-screen flex items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center space-y-6"
+          >
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto" />
+            
+            <div className="space-y-2">
+              <h2 className="text-xl font-semibold text-gray-900">
+                Checking Payment Status
+              </h2>
+              <p className="text-sm text-gray-600 max-w-sm">
+                Please wait while we confirm your payment. This may take a few moments...
+              </p>
+            </div>
+      
+            <motion.div
+              animate={{ 
+                opacity: [0.5, 1, 0.5],
+                scale: [0.98, 1, 0.98]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="text-xs text-gray-500"
+            >
+              Do not close this window
+            </motion.div>
+          </motion.div>
         </div>
-    );
+      );
 
     return (
         <div className="min-h-screen bg-gray-50 py-12">

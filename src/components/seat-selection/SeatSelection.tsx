@@ -15,14 +15,21 @@ const SeatSelection = ({ occupiedSeats, maxSeats, onSeatSelect, heading }: SeatS
 
   const handleSeatClick = (seatNumber: number) => {
     if (occupiedSeats.includes(seatNumber)) return;
-
-    if (selectedSeats.includes(seatNumber)) {
-      setSelectedSeats(selectedSeats.filter(seat => seat !== seatNumber));
-    } else if (selectedSeats.length < maxSeats) {
-      setSelectedSeats([...selectedSeats, seatNumber]);
-    }
-
-    onSeatSelect(selectedSeats);
+  
+    setSelectedSeats(prevSeats => {
+      let newSeats;
+      if (prevSeats.includes(seatNumber)) {
+        newSeats = prevSeats.filter(seat => seat !== seatNumber);
+      } else if (prevSeats.length < maxSeats) {
+        newSeats = [...prevSeats, seatNumber];
+      } else {
+        return prevSeats;
+      }
+      
+      // Call onSeatSelect with the new seats array
+      onSeatSelect(newSeats);
+      return newSeats;
+    });
   };
 
   const getSeatStatus = (seatNumber: number) => {

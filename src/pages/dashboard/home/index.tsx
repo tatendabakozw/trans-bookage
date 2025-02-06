@@ -1,7 +1,7 @@
-import BusTable from "@/components/bus-table/bus-table";
-import Calendar from "@/components/clock/Calender";
-import DashboardLayout from "@/layouts/DashboardLayout";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import BusTable from "@/components/bus-table/bus-table";
+import DashboardLayout from "@/layouts/DashboardLayout";
+import Calendar from "@/components/clock/Calender";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 

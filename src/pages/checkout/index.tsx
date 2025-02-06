@@ -97,8 +97,10 @@ function Checkout() {
                 selectedSeats
             };
 
-            const response: any = await api.post('/bookings/create', bookingData);
-            router.push(`/booking/confirmation/${response.booking._id}`);
+            // const response: any = await api.post('/bookings/create', bookingData);
+            // router.push(`/booking/confirmation/${response.booking._id}`);
+            console.log(selectedSeats)
+            setIsLoading(false)
         } catch (error) {
             console.error('Booking error:', error);
         } finally {

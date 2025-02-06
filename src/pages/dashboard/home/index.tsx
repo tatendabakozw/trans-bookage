@@ -1,11 +1,6 @@
 import BusTable from "@/components/bus-table/bus-table";
 import Calendar from "@/components/clock/Calender";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { BanknotesIcon } from "@heroicons/react/16/solid";
-import {
-    ClipboardDocumentIcon,
-    MagnifyingGlassIcon,
-} from "@heroicons/react/16/solid";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -13,6 +8,26 @@ import React, { useState } from "react";
 const Overview = () => {
     const router = useRouter();
     const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+
+    const normalizeDate = (date: Date) => {
+        // Reset time to midnight in local timezone
+        const normalized = new Date(date);
+        normalized.setHours(0, 0, 0, 0);
+        return normalized;
+    };
+
+    const formatDateForAPI = (date: Date) => {
+        // Format as YYYY-MM-DD
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const handleDateSelection = (date: Date) => {
+        const normalizedDate = normalizeDate(date);
+        setSelectedDate(normalizedDate);
+    };
 
     return (
         <DashboardLayout>
@@ -33,16 +48,20 @@ const Overview = () => {
                         <PlusCircleIcon height={24} width={24} />
                         <p>Add New</p>
                     </button>
-                </div>            
+                </div>
                 <div className="grid md:grid-cols-3 grid-cols-1 gap-8">
                     <div className="md:col-span-2 col-span-1 flex flex-col space-y-4 ">
-                        <BusTable selectedDate={selectedDate?.toISOString().split('T')[0] as any} />
+                    <BusTable 
+                            selectedDate={
+                                selectedDate ? formatDateForAPI(selectedDate) : undefined
+                            } 
+                        />
                     </div>
                     <div className="col-span-1">
-                        <Calendar  selectedDate={selectedDate}
-                        onDateSelect={(date: any) => {
-                            setSelectedDate(date);
-                        }} />
+                    <Calendar 
+                            selectedDate={selectedDate}
+                            onDateSelect={handleDateSelection}
+                        />
                     </div>
                 </div>
             </div>

@@ -13,16 +13,6 @@ import React, { useState } from "react";
 const Overview = () => {
     const router = useRouter();
     const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-    const [selected_option, setSelectedOption] = useState({
-        name: "Active",
-        _id: "active",
-    });
-
-    const tap_options = [
-        { name: "Active", _id: "active" },
-        { name: "Suspended", _id: "suspended" },
-        { name: "All", _id: "all" },
-    ];
 
     return (
         <DashboardLayout>
@@ -43,42 +33,14 @@ const Overview = () => {
                         <PlusCircleIcon height={24} width={24} />
                         <p>Add New</p>
                     </button>
-                </div>
-                {/* search and filter */}
-                <div className="flex flex-row items-center space-x-4 w-full">
-                    <div className="flex flex-row items-center flex-1 bg-white border border-zinc-200/50 text-sm rounded-lg px-2 space-x-4">
-                        <MagnifyingGlassIcon
-                            height={20}
-                            width={20}
-                            className="text-zinc-400"
-                        />
-                        <input
-                            type="text"
-                            className="border-none outline-none flex-1 py-2 text-zinc-700"
-                            placeholder="search anything"
-                        />
-                    </div>
-                    <div className="md:flex hidden flex-row items-center text-sm  bg-white rounded-lg divide-x-[1px] divide-zinc-200 dark:divide-zinc-700 main-border  ">
-                        {tap_options.map((item) => (
-                            <button
-                                onClick={() => setSelectedOption(item)}
-                                key={item._id}
-                                className={`${item._id === selected_option._id
-                                    ? "text-primary-original "
-                                    : "text-zinc-700 "
-                                    } px-4 py-2`}
-                            >
-                                {item.name}
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                </div>            
                 <div className="grid md:grid-cols-3 grid-cols-1 gap-8">
                     <div className="md:col-span-2 col-span-1 flex flex-col space-y-4 ">
-                        <BusTable />
+                        <BusTable selectedDate={selectedDate?.toISOString().split('T')[0] as any} />
                     </div>
                     <div className="col-span-1">
-                        <Calendar onDateSelect={(date: any) => {
+                        <Calendar  selectedDate={selectedDate}
+                        onDateSelect={(date: any) => {
                             setSelectedDate(date);
                         }} />
                     </div>

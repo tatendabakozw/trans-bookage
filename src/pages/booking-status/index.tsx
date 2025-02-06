@@ -24,19 +24,28 @@ function BookingStatus() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        let timeoutId: NodeJS.Timeout;
+        
         const pollPaymentStatus = async () => {
-            if (!booking?.pollUrl || booking.paymentStatus === 'completed') return;
-
+            // Get pollUrl from localStorage
+            const storedBookingId = localStorage.getItem('booking_id');
+    
             try {
-                const response: any = await api.get(`/bookings/${id}/status`);
+                const response:any = await api.get(`/bookings/${storedBookingId}/status`);
                 setBooking(response);
-                setIsLoading(false)
+                setIsLoading(false);
+
+                console.log("reponse from api:", response)
 
                 if (response.paymentStatus === 'pending') {
-                    setTimeout(pollPaymentStatus, 3000); // Poll every 3 seconds
+                    timeoutId = setTimeout(pollPaymentStatus, 3000);
+                } else {
+                    // Clear localStorage when payment is complete or failed
+                    localStorage.removeItem('POLL_URL');
+                    localStorage.removeItem('booking_id');
                 }
             } catch (err) {
-                setIsLoading(false)
+                setIsLoading(false);
                 setError('Failed to check payment status');
             }
         };
@@ -44,7 +53,14 @@ function BookingStatus() {
         if (id) {
             pollPaymentStatus();
         }
-    }, [id, booking?.pollUrl]);
+
+        // Cleanup timeout on unmount
+        return () => {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        };
+    }, [id]);
 
     if (isLoading) return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">

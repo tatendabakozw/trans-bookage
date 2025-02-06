@@ -128,6 +128,12 @@ function Checkout() {
             const response: any = await api.post('/bookings/create', bookingData);
             console.log('Booking response:', response);
 
+            // Save pollUrl to localStorage
+            if (response?.payment?.pollUrl) {
+                localStorage.setItem("POLL_URL", response?.payment?.pollUrl);
+                localStorage.setItem("booking_id", response?.booking?._id);
+            }
+
             if (response?.payment?.redirectUrl) {
                 setIsRedirecting(true);
                 window.location.href = response.payment.redirectUrl;

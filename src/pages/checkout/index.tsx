@@ -53,12 +53,18 @@ function Checkout() {
         }
     };
 
+    console.log("bus detaruls", busDetails);
+
     // Add useEffect to fetch on mount
     useEffect(() => {
         if (busId) {
             fetchBusDetails(busId as string);
         }
     }, [busId]);
+
+    const handleSeatSelection = (seats: number[]) => {
+        setSelectedSeats(seats);
+      };
 
     // Add handler for seat quantity updates
     const handleSeatQuantityChange = (newQuantity: number) => {
@@ -92,7 +98,6 @@ function Checkout() {
             };
 
             const response: any = await api.post('/bookings/create', bookingData);
-            setIsLoading(false);
             router.push(`/booking/confirmation/${response.booking._id}`);
         } catch (error) {
             console.error('Booking error:', error);
@@ -242,7 +247,7 @@ function Checkout() {
                                             <SeatSelection
                                                 occupiedSeats={occupiedSeats}
                                                 maxSeats={seatQuantity}
-                                                onSeatSelect={(seats) => setSelectedSeats(seats)}
+                                                onSeatSelect={handleSeatSelection}
                                             />
                                         )}
                                     </div>

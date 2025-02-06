@@ -20,8 +20,7 @@ interface BookBusComponentProps {
     price: number;
     seatsAvailable: number;
     busType: string;
-    passengers:any;
-    searchedDate?:string
+    passengers:any
   }
 
 const BookBusComponent = ({
@@ -35,8 +34,7 @@ const BookBusComponent = ({
     price,
     seatsAvailable,
     busType,
-    passengers,
-    searchedDate
+    passengers
 }: BookBusComponentProps) => {
  
   const router = useRouter();
@@ -56,7 +54,7 @@ const BookBusComponent = ({
       route: routeName,
       from: startingPoint,
       to: destination,
-      date: searchedDate as unknown as string,
+      date: travelDate,
       pickup: pickupTime,
       dropoff: dropOffTime,
       price: price.toString(),
@@ -95,7 +93,7 @@ const BookBusComponent = ({
         <div className="space-y-2">
           <div className="flex items-center space-x-2 text-gray-600">
             <CalendarIcon className="w-4 h-4 text-blue-600" />
-            <span className="text-sm">{searchedDate}</span>
+            <span className="text-sm">{travelDate}</span>
           </div>
           <div className="flex items-center space-x-2 text-gray-600">
             <ClockIcon className="w-4 h-4 text-blue-600" />

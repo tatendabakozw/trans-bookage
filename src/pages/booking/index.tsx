@@ -44,7 +44,7 @@ const BusSearch = () => {
             const queryParams = new URLSearchParams({
                 from: searchData.from,
                 to: searchData.to,
-                date: searchData.date,
+                travelDate: searchData.date,
             });
 
             const response: any = await api.get(`/bus/all?${queryParams}`);

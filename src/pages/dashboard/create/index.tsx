@@ -39,6 +39,9 @@ function Create() {
         seatsAvailable: 50,
         busType: 'Standard'
     });
+    const [selectedMonth, setSelectedMonth] = useState<string>(
+        new Date().toISOString().split('T')[0].substring(0, 7)
+    );
 
     const handleCityChange = (type: 'startingPoint' | 'destination', city: City) => {
         setFormData(prev => ({
@@ -61,18 +64,30 @@ function Create() {
         return remainingDays;
     };
 
+    const getDaysInMonth = (yearMonth: string) => {
+        const [year, month] = yearMonth.split('-').map(Number);
+        const firstDay = new Date(year, month - 1, 1);
+        const lastDay = new Date(year, month, 0);
+        const days: Date[] = [];
+
+        for (let day = 1; day <= lastDay.getDate(); day++) {
+            days.push(new Date(year, month - 1, day));
+        }
+
+        return days;
+    };
+
     const handleFillMonth = async () => {
-        if (!formData.travelDate) {
-            alert('Please select a travel date first');
+        if (!selectedMonth) {
+            alert('Please select a month first');
             return;
         }
 
         setIsFillingMonth(true);
 
         try {
-            const selectedDate = new Date(formData.travelDate);
-            const remainingDays = getRemainingDaysInMonth(selectedDate);
-            const dates = remainingDays.map(date => date.toISOString().split('T')[0]);
+            const days = getDaysInMonth(selectedMonth);
+            const dates = days.map(date => date.toISOString().split('T')[0]);
 
             const response: any = await api.post('/bus/create-multiple', {
                 ...formData,
@@ -84,6 +99,7 @@ function Create() {
             }
 
             router.push('/dashboard/home');
+            console.log(dates)
         } catch (error) {
             console.error('Error creating routes:', error);
         } finally {
@@ -247,24 +263,43 @@ function Create() {
 
                             {/* TODO: select which month you want to add for */}
 
-                            <div className="md:col-span-2 col-span-1 flex gap-4 justify-end mt-8">
-                                <button
-                                    onClick={handleFillMonth}
-                                    disabled={isFillingMonth || !formData.travelDate || isLoading}
-                                    className="px-6 py-2 bg-zinc-900 w-full text-white text-center items-center justify-center content-center rounded-xl hover:bg-zinc-800 disabled:opacity-50 flex gap-2"
-                                >
-                                    {isLoading ? (
-                                        <>
-                                            <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                            </svg>
-                                            <span>Creating...</span>
-                                        </>
-                                    ) : (
-                                        'Create Route for Month'
-                                    )}
-                                </button>
+                            <div className="space-y-2">
+                                <label className="flex items-center text-sm font-medium text-gray-700">
+                                    <CalendarIcon className="w-4 h-4 mr-2 text-blue-600" />
+                                    Select Month
+                                </label>
+                                <div className="flex gap-4">
+                                    <input
+                                        type="month"
+                                        value={selectedMonth}
+                                        onChange={(e) => setSelectedMonth(e.target.value)}
+                                        className="flex-1 px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500"
+                                        min={new Date().toISOString().split('T')[0].substring(0, 7)}
+                                    />
+                                    <motion.button
+                                        whileHover={{ scale: 1.01 }}
+                                        whileTap={{ scale: 0.99 }}
+                                        onClick={handleFillMonth}
+                                        disabled={isFillingMonth || !selectedMonth}
+                                        className="px-6 py-2 bg-zinc-900 text-white rounded-xl hover:bg-zinc-800 
+        disabled:opacity-50 flex items-center gap-2"
+                                    >
+                                        {isFillingMonth ? (
+                                            <>
+                                                <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                                </svg>
+                                                <span>Creating...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CalendarIcon className="h-5 w-5" />
+                                                <span>Fill Month</span>
+                                            </>
+                                        )}
+                                    </motion.button>
+                                </div>
                             </div>
 
                             <div className="col-span-2 flex flex-row w-full items-center">

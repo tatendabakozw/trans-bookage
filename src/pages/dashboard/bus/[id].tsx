@@ -272,7 +272,7 @@ function BusDetails() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(booking.bookingDate).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td onClick={()=> router.push(`/dashboard/bookings/${booking._id}`)} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {/* TODO: expand item to view all info in detail including passengers when clicked */}
                       <InformationCircleIcon height={20} width={20} />
                     </td>

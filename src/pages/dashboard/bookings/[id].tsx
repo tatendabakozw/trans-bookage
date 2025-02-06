@@ -14,6 +14,7 @@ import {
   XCircleIcon
 } from '@heroicons/react/24/outline';
 import api from '@/config/apiClient';
+import SeatSelection from '@/components/seat-selection/SeatSelection';
 
 interface Booking {
   _id: string;
@@ -188,6 +189,7 @@ const SingleBookingManagement = () => {
               </div>
             </div>
           </div>
+          <SeatSelection maxSeats={72} occupiedSeats={booking.selectedSeats} onSeatSelect={() => console.log("c")} />
         </motion.div>
       </div>
     </DashboardLayout>

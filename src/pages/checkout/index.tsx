@@ -28,6 +28,38 @@ function Checkout() {
     );
     const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
 
+    const [busDetails, setBusDetails] = useState<any>(null);
+    const [busLoading, setBusLoading] = useState(true);
+    const [busError, setError] = useState<string | null>(null);
+    const [occupiedSeats, setOccupiedSeats] = useState<number[]>([]);
+
+    // Add fetch function
+    const fetchBusDetails = async (id: string) => {
+        try {
+            setBusLoading(true);
+            const response: any = await api.get(`/bus/${id}`);
+            setBusDetails(response);
+
+            // Get all occupied seats from existing bookings
+            const occupiedSeats = response.bookings?.reduce((acc: number[], booking: any) => {
+                return [...acc, ...booking.selectedSeats];
+            }, []);
+
+            setOccupiedSeats(occupiedSeats);
+        } catch (error) {
+            setError('Failed to fetch bus details');
+        } finally {
+            setBusLoading(false);
+        }
+    };
+
+    // Add useEffect to fetch on mount
+    useEffect(() => {
+        if (busId) {
+            fetchBusDetails(busId as string);
+        }
+    }, [busId]);
+
     // Add handler for seat quantity updates
     const handleSeatQuantityChange = (newQuantity: number) => {
         if (newQuantity < 1) return;
@@ -200,15 +232,19 @@ function Checkout() {
                                         </div>
                                     </div>
                                     <div className="px-6 py-6">
-                                        <SeatSelection
-                                            heading
-                                            occupiedSeats={[]}
-                                            maxSeats={parseInt(seatQuantity as unknown as string)}
-                                            onSeatSelect={(selectedSeats) => {
-                                                console.log('Selected seats:', selectedSeats);
-                                                setSelectedSeats(selectedSeats)
-                                            }}
-                                        />
+                                        {busLoading ? (
+                                            <div className="flex justify-center p-6">
+                                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
+                                            </div>
+                                        ) : busError ? (
+                                            <div className="text-red-600 p-4">{busError}</div>
+                                        ) : (
+                                            <SeatSelection
+                                                occupiedSeats={occupiedSeats}
+                                                maxSeats={seatQuantity}
+                                                onSeatSelect={(seats) => setSelectedSeats(seats)}
+                                            />
+                                        )}
                                     </div>
                                 </div>
 

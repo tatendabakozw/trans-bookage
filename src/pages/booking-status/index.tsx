@@ -30,11 +30,13 @@ function BookingStatus() {
             try {
                 const response: any = await api.get(`/bookings/${id}/status`);
                 setBooking(response);
+                setIsLoading(false)
 
                 if (response.paymentStatus === 'pending') {
                     setTimeout(pollPaymentStatus, 3000); // Poll every 3 seconds
                 }
             } catch (err) {
+                setIsLoading(false)
                 setError('Failed to check payment status');
             }
         };

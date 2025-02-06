@@ -18,7 +18,6 @@ interface Booking {
 
 function BookingStatus() {
     const router = useRouter();
-    const { id } = router.query;
     const [booking, setBooking] = useState<Booking | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -29,15 +28,16 @@ function BookingStatus() {
         const pollPaymentStatus = async () => {
             // Get pollUrl from localStorage
             const storedBookingId = localStorage.getItem('booking_id');
+            console.log("stored booking id", storedBookingId)
     
             try {
                 const response:any = await api.get(`/bookings/${storedBookingId}/status`);
-                setBooking(response);
+                setBooking(response.booking);
                 setIsLoading(false);
 
                 console.log("reponse from api:", response)
 
-                if (response.paymentStatus === 'pending') {
+                if (response.booking.paymentStatus === 'pending') {
                     timeoutId = setTimeout(pollPaymentStatus, 3000);
                 } else {
                     // Clear localStorage when payment is complete or failed
@@ -50,9 +50,7 @@ function BookingStatus() {
             }
         };
 
-        if (id) {
             pollPaymentStatus();
-        }
 
         // Cleanup timeout on unmount
         return () => {
@@ -60,7 +58,7 @@ function BookingStatus() {
                 clearTimeout(timeoutId);
             }
         };
-    }, [id]);
+    }, []);
 
     if (isLoading) return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
@@ -168,7 +166,7 @@ function BookingStatus() {
                         </button>
                         {booking?.paymentStatus === 'completed' && (
                             <button
-                                onClick={() => router.push(`/bookings/${booking._id}`)}
+                                onClick={() => router.push(`/booking/confirmation/${booking._id}`)}
                                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                             >
                                 View Ticket

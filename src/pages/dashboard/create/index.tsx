@@ -50,19 +50,8 @@ function Create() {
         }));
     };
 
-    const getRemainingDaysInMonth = (date: Date) => {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const lastDay = new Date(year, month + 1, 0).getDate();
-        const currentDay = date.getDate();
-        const remainingDays: Date[] = [];
-
-        for (let day = currentDay + 1; day <= lastDay; day++) {
-            remainingDays.push(new Date(year, month, day));
-        }
-
-        return remainingDays;
-    };
+    const [monthError, setMonthError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const getDaysInMonth = (yearMonth: string) => {
         const [year, month] = yearMonth.split('-').map(Number);
@@ -79,11 +68,13 @@ function Create() {
 
     const handleFillMonth = async () => {
         if (!selectedMonth) {
-            alert('Please select a month first');
+            setMonthError('Please select a month first');
             return;
         }
 
         setIsFillingMonth(true);
+        setMonthError(null);
+        setSuccessMessage(null);
 
         try {
             const days = getDaysInMonth(selectedMonth);
@@ -95,13 +86,21 @@ function Create() {
             });
 
             if (response.errors?.length > 0) {
-                console.warn('Some routes failed to create:', response.errors);
+                setMonthError(`Failed to create some routes: ${response.errors.join(', ')}`);
             }
 
-            router.push('/dashboard/home');
-            console.log(dates)
-        } catch (error) {
-            console.error('Error creating routes:', error);
+            setSuccessMessage(
+                `Successfully created ${response.totalCreated} routes for ${selectedMonth}`
+            );
+
+            setTimeout(() => {
+                router.push('/dashboard/home');
+            }, 2000);
+
+        } catch (error: any) {
+            setMonthError(
+                error.response?.data?.error || 'Failed to create routes'
+            );
         } finally {
             setIsFillingMonth(false);
         }
@@ -262,6 +261,27 @@ function Create() {
                             </div>
 
                             {/* TODO: select which month you want to add for */}
+                            <div className="space-y-2 md:col-span-2 col-span-1">
+                                {monthError && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="p-4 bg-red-50 text-red-600 rounded-xl mb-4"
+                                    >
+                                        {monthError}
+                                    </motion.div>
+                                )}
+
+                                {successMessage && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="p-4 bg-green-50 text-green-600 rounded-xl mb-4"
+                                    >
+                                        {successMessage}
+                                    </motion.div>
+                                )}
+                            </div>
 
                             <div className="space-y-2">
                                 <label className="flex items-center text-sm font-medium text-gray-700">
@@ -282,7 +302,7 @@ function Create() {
                                         onClick={handleFillMonth}
                                         disabled={isFillingMonth || !selectedMonth}
                                         className="px-6 py-2 bg-zinc-900 text-white rounded-xl hover:bg-zinc-800 
-        disabled:opacity-50 flex items-center gap-2"
+                                                    disabled:opacity-50 flex items-center gap-2"
                                     >
                                         {isFillingMonth ? (
                                             <>
